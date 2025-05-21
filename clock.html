@@ -1,162 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
-<style>
-    /* General Reset */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Roboto', sans-serif;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>School Schedule</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      height: 100vh;
+      background: linear-gradient(to right, #f0f2f5, #e0e7ff);
     }
-
-
-
-    .container {
-        text-align: center;
-        padding: 50px 20px;
+    nav {
+      width: 200px;
+      background-color: #1e293b;
+      color: white;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
-
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    main {
+      flex-grow: 1;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-y: auto;
+    }
     h1 {
-        font-size: 2.5rem;
-        margin-bottom: 20px;
-        animation: fadeIn 2s ease-in-out;
+      margin-bottom: 30px;
+      color: #1e293b;
     }
-
-    h2 {
-        margin-top: 30px;
-        font-size: 1.8rem;
+    .period {
+      width: 80%;
+      margin-bottom: 20px;
     }
-
-    .day-schedule {
-        margin-top: 20px;
-        text-align: left;
-        padding: 20px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    .period-name {
+      font-weight: bold;
+      margin-bottom: 5px;
     }
-
-    .schedule-item {
-        margin: 10px 0;
-        font-size: 1.1rem;
+    .progress-container {
+      background-color: #cbd5e1;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 20px;
     }
-
-    footer {
-        text-align: center;
-        padding: 15px 10px;
-        background: rgba(0, 0, 0, 0.1); /* Light semi-transparent footer */
-        font-size: 0.9rem;
+    .progress-bar {
+      height: 100%;
+      background: #3b82f6;
+      transition: width 0.5s;
     }
-
-    .button-container {
-        margin-top: 10px;
-    }
-
-    button {
-        background: lightpink;;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        padding: 15px 30px;
-        font-size: 1.2rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    button:hover {
-        background: pink;
-        transform: scale(1.1);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    }
-
-    /* Subtle Animations */
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        h1 {
-            font-size: 2rem;
-        }
-
-        button {
-            font-size: 1rem;
-            padding: 12px 25px;
-        }
-    }
-</style>
-
-
-
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>School Schedule</title>
-  
-  
-  
-<style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 100px;
-      
-        }
-        .period {
-            margin: 10px 0;
-            padding: 10px;
-            border: 0px solid #ddd;
-            border-radius: 5px;
-          background-color: clear; /*prgress bar box backgroibnd color */
-        }
-        .countdown {
-            font-size: 20px;
-            font-weight: bold;
-        }
-        .progress-bar {
-            width: 100%;
-            background-color: black; /* prgress bar backgroudn color */
-            border-radius: 5px;
-            height: 25px;
-            margin: 10px 0;
-            position: relative;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            background-color: gray; /* prgress bar color */
-            border-radius: 5px;
-            text-align: center;
-            color: white; /* prgress bar text color */
-            line-height: 25px;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-        
-        }
-    </style>
+  </style>
 </head>
 <body>
+  <nav>
+    <h2>Navigation</h2>
+    <a href="#">Home</a>
+    <a href="#">Schedule</a>
+    <a href="#">Shop</a>
+    <a href="#">Games</a>
+    <a href="#">Settings</a>
+  </nav>
+  <main>
     <h1>Today's Schedule</h1>
-    <div id="schedule">
-        <!-- Progress bars will be inserted here -->
-    </div>
-    <button class="button" onclick="window.location.href='index.html'">Back to Home</button>
+    <div id="schedule"></div>
+  </main>
 
-    <script>
-        const schedules = {
-            'Monday': [
+  <script>
+    const schedule = {
+      'Monday': [
                 { name: '0 Period', start: '07:00', end: '08:00' },
                 { name: 'Passing 1', start: '08:00', end: '08:10' },
                 { name: '1st Period', start: '08:10', end: '09:00' },
@@ -232,139 +154,34 @@
                 { name: '5th Period', start: '13:00', end: '13:45' },
                 { name: 'Passing 5', start: '13:45', end: '13:50' },
                 { name: '6th Period', start: '13:50', end: '14:35' }
-              
-            ]
-        };
+      ]
+    };
 
-        function formatTime(date) {
-            return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
-        }
+    const scheduleContainer = document.getElementById('schedule');
+    const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
-        function calculateRemainingTime(startTime, endTime) {
-            const now = new Date();
-            const [startHours, startMinutes] = startTime.split(':').map(Number);
-            const [endHours, endMinutes] = endTime.split(':').map(Number);
-            
-            const startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), startHours, startMinutes, 0);
-            const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), endHours, endMinutes, 0);
+    (schedule[today] || []).forEach(period => {
+      const [startH, startM] = period.start.split(':').map(Number);
+      const [endH, endM] = period.end.split(':').map(Number);
+      const start = startH * 60 + startM;
+      const end = endH * 60 + endM;
+      const total = end - start;
+      const elapsed = currentMinutes - start;
+      const percent = Math.max(0, Math.min(100, (elapsed / total) * 100));
 
-            const duration = endDate - startDate;
-            const remainingTime = endDate - now;
+      const periodElem = document.createElement('div');
+      periodElem.className = 'period';
+      periodElem.innerHTML = `
+        <div class="period-name">${period.name} (${period.start} - ${period.end})</div>
+        <div class="progress-container">
+          <div class="progress-bar" style="width: ${percent}%"></div>
+        </div>
+      `;
 
-            if (remainingTime < 0) return { hours: 0, minutes: 0, seconds: 0, progress: 100 };
-
-            const hoursLeft = Math.floor(remainingTime / (1000 * 60 * 60));
-            const minutesLeft = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
-            const secondsLeft = Math.floor((remainingTime % (1000 * 60)) / 1000);
-
-            const progress = Math.max(0, 100 - (remainingTime / duration) * 100);
-
-            return { hours: hoursLeft, minutes: minutesLeft, seconds: secondsLeft, progress };
-        }
-
-        function updateCountdowns() {
-            const now = new Date();
-            const today = now.toLocaleDateString('en-US', { weekday: 'long' });
-            const daySchedule = schedules[today] || [];
-
-            document.getElementById('schedule').innerHTML = `<h2>${today}</h2>`;
-
-            daySchedule.forEach(period => {
-                const { hours, minutes, seconds, progress } = calculateRemainingTime(period.start, period.end);
-                const periodDiv = document.createElement('div');
-                periodDiv.className = 'period';
-                periodDiv.innerHTML = `
-                    <div><strong>${period.name}</strong></div>
-                    <div class="countdown">Time left: ${hours}h ${minutes}m ${seconds}s</div>
-                    <div class="progress-bar">
-                        <div class="progress-bar-fill" style="width: ${progress}%">${Math.floor(progress)}%</div>
-                    </div>
-                `;
-                document.getElementById('schedule').appendChild(periodDiv);
-            });
-        }
-
-        setInterval(updateCountdowns, 1000); // Update every second
-    </script>
-  
+      scheduleContainer.appendChild(periodElem);
+    });
+  </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <!-- Your usual head content here -->
-    <style>
-        /* Your usual styles here */
-    </style>
-</head>
-<body>
-    <!-- Your usual page content here -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const buttonColor = localStorage.getItem('buttonColor');
-            if (buttonColor) {
-                document.querySelectorAll('button').forEach(button => {
-                    button.style.backgroundColor = buttonColor;
-                });
-                document.querySelectorAll('h1').forEach(heading => {
-                    heading.style.color = buttonColor;
-                });
-            }
-        });
-    </script>
-  <footer>
-        <p>&copy; 2024. Inspiration from School Prgress by Grant Garbe. Code by Chatgpt.
-      This is not supposed to be harmful it is just for fun! :)</p>
-    </footer>
-  
-</body>
-</html>
-
-
-    <div class="red-line"></div>
-</head>
-<body>
-   <style>
-  body {
-    
-  background-image: url("/notebookbg.jpg");
-  background-repeat: repeat;
-  background-size: 25em; /* Adjust the size as needed */
-  line-height: 1.85; /* Adjust the size as needed */
-  color: black;
-  min-height: 100vh;
-  position: relative;
-  margin-left: 1.1in;
-  font-family: "Shadows Into Light", sans-serif;
-}
-        .red-line {
-  position: fixed;
-  top: 0;
-  left: 1in;
-  width: 2px;
-  height: 100vh;
-  background: red;
-}
-  </style>
-  
-</body>
-</html>
-
-
-
-
-    
