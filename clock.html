@@ -1,83 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>School Schedule</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Schedule Homepage</title>
   <style>
+    :root {
+      --bg-color: #f4f4f4;
+      --text-color: #333;
+      --nav-bg: #2c3e50;
+      --progress-bg: #e0e0e0;
+      --progress-fill: #3498db;
+    }
+
+    body.dark {
+      --bg-color: #1e1e1e;
+      --text-color: #f4f4f4;
+      --nav-bg: #34495e;
+      --progress-bg: #333;
+      --progress-fill: #9b59b6;
+    }
+
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
       height: 100vh;
-      background: linear-gradient(to right, #f0f2f5, #e0e7ff);
+      font-family: Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
     }
+
     nav {
-      width: 200px;
-      background-color: #1e293b;
+      background-color: var(--nav-bg);
       color: white;
       padding: 20px;
+      width: 200px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 10px;
     }
+
     nav a {
       color: white;
       text-decoration: none;
-      font-weight: bold;
     }
-    nav a:hover {
-      text-decoration: underline;
-    }
-    main {
-      flex-grow: 1;
-      padding: 40px;
+
+    .content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      overflow-y: auto;
+      gap: 20px;
+      justify-content: center;
     }
-    h1 {
-      margin-bottom: 30px;
-      color: #1e293b;
-    }
-    .period {
-      width: 80%;
-      margin-bottom: 20px;
-    }
-    .period-name {
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
+
     .progress-container {
-      background-color: #cbd5e1;
+      background-color: var(--progress-bg);
       border-radius: 10px;
       overflow: hidden;
-      height: 20px;
+      width: 100%;
+      height: 30px;
     }
+
     .progress-bar {
       height: 100%;
-      background: #3b82f6;
-      transition: width 0.5s;
+      width: 0%;
+      background-color: var(--progress-fill);
+      transition: width 0.2s ease-in-out;
+    }
+
+    .toggle-container {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .toggle-container label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
   </style>
 </head>
 <body>
   <nav>
-    <h2>Navigation</h2>
     <a href="#">Home</a>
     <a href="#">Schedule</a>
     <a href="#">Shop</a>
-    <a href="#">Games</a>
     <a href="#">Settings</a>
+    <label>
+      <input type="checkbox" id="darkToggle" /> Dark Mode
+    </label>
+    <label>
+      <input type="checkbox" id="seventhToggle" checked /> Include 7th Period
+    </label>
   </nav>
-  <main>
-    <h1>Today's Schedule</h1>
+
+  <div class="content" id="progressArea">
+    <div class="toggle-container">
+      <h2>Today's Schedule</h2>
+    </div>
     <div id="schedule"></div>
-  </main>
+  </div>
 
   <script>
-    const schedule = {
+    const scheduleData = {
       'Monday': [
                 { name: '0 Period', start: '07:00', end: '08:00' },
                 { name: 'Passing 1', start: '08:00', end: '08:10' },
@@ -158,30 +186,55 @@
     };
 
     const scheduleContainer = document.getElementById('schedule');
-    const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
-    const now = new Date();
-    const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
-    (schedule[today] || []).forEach(period => {
-      const [startH, startM] = period.start.split(':').map(Number);
-      const [endH, endM] = period.end.split(':').map(Number);
-      const start = startH * 60 + startM;
-      const end = endH * 60 + endM;
-      const total = end - start;
-      const elapsed = currentMinutes - start;
-      const percent = Math.max(0, Math.min(100, (elapsed / total) * 100));
+    function createProgress(name, percent) {
+      const container = document.createElement('div');
+      const label = document.createElement('div');
+      label.innerText = name;
+      const barContainer = document.createElement('div');
+      barContainer.className = 'progress-container';
+      const bar = document.createElement('div');
+      bar.className = 'progress-bar';
+      bar.style.width = percent + '%';
+      barContainer.appendChild(bar);
+      container.appendChild(label);
+      container.appendChild(barContainer);
+      return container;
+    }
 
-      const periodElem = document.createElement('div');
-      periodElem.className = 'period';
-      periodElem.innerHTML = `
-        <div class="period-name">${period.name} (${period.start} - ${period.end})</div>
-        <div class="progress-container">
-          <div class="progress-bar" style="width: ${percent}%"></div>
-        </div>
-      `;
+    function updateSchedule() {
+      scheduleContainer.innerHTML = '';
+      const now = new Date();
+      const day = now.toLocaleDateString('en-US', { weekday: 'long' });
+      const periods = scheduleData[day] || [];
+      const include7th = document.getElementById('seventhToggle').checked;
 
-      scheduleContainer.appendChild(periodElem);
+      for (const period of periods) {
+        if (!include7th && period.name.includes('7th')) continue;
+        const start = new Date();
+        const [sh, sm] = period.start.split(':');
+        start.setHours(sh, sm, 0);
+        const end = new Date();
+        const [eh, em] = period.end.split(':');
+        end.setHours(eh, em, 0);
+
+        const total = end - start;
+        const elapsed = now - start;
+        let percent = Math.max(0, Math.min(100, (elapsed / total) * 100));
+
+        const progress = createProgress(period.name, percent);
+        scheduleContainer.appendChild(progress);
+      }
+    }
+
+    document.getElementById('darkToggle').addEventListener('change', (e) => {
+      document.body.classList.toggle('dark', e.target.checked);
     });
+
+    document.getElementById('seventhToggle').addEventListener('change', updateSchedule);
+
+    updateSchedule();
+    setInterval(updateSchedule, 60000);
   </script>
 </body>
 </html>
