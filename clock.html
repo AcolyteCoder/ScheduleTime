@@ -81,6 +81,11 @@
       align-items: center;
       gap: 10px;
     }
+
+    .time-left {
+      font-size: 0.9em;
+      margin-bottom: 5px;
+    }
   </style>
 </head>
 <body>
@@ -187,10 +192,13 @@
 
     const scheduleContainer = document.getElementById('schedule');
 
-    function createProgress(name, percent) {
+    function createProgress(name, percent, timeLeftText) {
       const container = document.createElement('div');
       const label = document.createElement('div');
       label.innerText = name;
+      const timeLeft = document.createElement('div');
+      timeLeft.className = 'time-left';
+      timeLeft.innerText = timeLeftText;
       const barContainer = document.createElement('div');
       barContainer.className = 'progress-container';
       const bar = document.createElement('div');
@@ -198,8 +206,18 @@
       bar.style.width = percent + '%';
       barContainer.appendChild(bar);
       container.appendChild(label);
+      container.appendChild(timeLeft);
       container.appendChild(barContainer);
       return container;
+    }
+
+    function formatTimeLeft(msLeft) {
+      if (msLeft <= 0) return 'Ended';
+      const totalSeconds = Math.floor(msLeft / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      return `${hours}h ${minutes}m ${seconds}s left`;
     }
 
     function updateSchedule() {
@@ -213,16 +231,18 @@
         if (!include7th && period.name.includes('7th')) continue;
         const start = new Date();
         const [sh, sm] = period.start.split(':');
-        start.setHours(sh, sm, 0);
+        start.setHours(sh, sm, 0, 0);
         const end = new Date();
         const [eh, em] = period.end.split(':');
-        end.setHours(eh, em, 0);
+        end.setHours(eh, em, 0, 0);
 
         const total = end - start;
         const elapsed = now - start;
+        const remaining = end - now;
         let percent = Math.max(0, Math.min(100, (elapsed / total) * 100));
 
-        const progress = createProgress(period.name, percent);
+        const timeLeftText = formatTimeLeft(remaining);
+        const progress = createProgress(period.name, percent, timeLeftText);
         scheduleContainer.appendChild(progress);
       }
     }
@@ -234,7 +254,7 @@
     document.getElementById('seventhToggle').addEventListener('change', updateSchedule);
 
     updateSchedule();
-    setInterval(updateSchedule, 60000);
+    setInterval(updateSchedule, 1000);
   </script>
 </body>
 </html>
