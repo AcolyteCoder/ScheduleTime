@@ -87,21 +87,22 @@
     }
 
     main {
-      margin-top: 60px;
+      margin-top: 60px; /* below nav */
       flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       gap: 15px;
       padding: 20px;
-      overflow: hidden;
+      overflow-y: auto; /* scroll only if necessary */
+      max-height: calc(100vh - 60px);
+      box-sizing: border-box;
     }
 
     .progress-bar-container {
       background: var(--progress-bg);
-      border-radius: 25px;
+      border-radius: 30px;
       position: relative;
-      height: 50px;
+      height: 60px; /* taller bars */
       width: 100%;
       max-width: 800px;
       margin: 0 auto;
@@ -114,15 +115,15 @@
       height: 100%;
       background: var(--progress-fill);
       width: 0;
-      border-radius: 25px 0 0 25px;
+      border-radius: 30px 0 0 30px;
       transition: width 0.5s ease;
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      padding-right: 15px;
+      padding-right: 20px;
       color: var(--progress-text);
       font-weight: 700;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       box-sizing: border-box;
       white-space: nowrap;
     }
@@ -133,7 +134,7 @@
       top: 50%;
       transform: translateY(-50%);
       font-weight: 700;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       color: var(--text-color);
       user-select: none;
     }
@@ -141,7 +142,7 @@
     .time-info {
       margin-top: 5px;
       text-align: center;
-      font-size: 0.9rem;
+      font-size: 1rem;
       color: var(--text-color);
       max-width: 800px;
       margin-left: auto;
@@ -151,16 +152,16 @@
 
     @media (max-width: 600px) {
       .progress-bar-container {
-        height: 40px;
+        height: 50px;
       }
 
       .progress-bar-fill {
-        font-size: 0.9rem;
-        padding-right: 10px;
+        font-size: 1rem;
+        padding-right: 12px;
       }
 
       .progress-label {
-        font-size: 0.9rem;
+        font-size: 1rem;
         left: 12px;
       }
 
@@ -192,12 +193,12 @@
   </nav>
 
   <main id="scheduleContainer" aria-live="polite" aria-atomic="true" aria-relevant="additions removals">
-    <!-- Progress bars will be generated here -->
+    <!-- Progress bars inserted here -->
   </main>
 
   <script>
     const scheduleData = {
-     'Monday': [
+      'Monday': [
                 { name: '0 Period', start: '07:00', end: '08:00' },
                 { name: 'Passing 1', start: '08:00', end: '08:10' },
                 { name: '1st Period', start: '08:10', end: '09:00' },
@@ -274,7 +275,7 @@
                 { name: 'Passing 5', start: '13:45', end: '13:50' },
                 { name: '6th Period', start: '13:50', end: '14:35' }
       ]
-      // Add other days if needed
+      // Add other days as needed
     };
 
     const scheduleContainer = document.getElementById('scheduleContainer');
@@ -292,7 +293,7 @@
       scheduleContainer.innerHTML = '';
       const now = new Date();
       const dayName = now.toLocaleDateString('en-US', { weekday: 'long' });
-      const periods = scheduleData[dayName] || scheduleData['Monday']; // default Monday
+      const periods = scheduleData[dayName] || scheduleData['Monday']; // fallback to Monday
 
       const include7th = document.getElementById('seventhToggle').checked;
 
@@ -312,7 +313,6 @@
         const remaining = Math.max(end - now, 0);
         const percent = (elapsed / totalDuration) * 100;
 
-        // Create elements
         const barContainer = document.createElement('div');
         barContainer.className = 'progress-bar-container';
 
@@ -322,30 +322,4 @@
 
         const barFill = document.createElement('div');
         barFill.className = 'progress-bar-fill';
-        barFill.style.width = percent + '%';
-
-        // Number inside bar showing %
-        barFill.textContent = `${percent.toFixed(0)}%`;
-
-        const timeInfo = document.createElement('div');
-        timeInfo.className = 'time-info';
-        timeInfo.textContent = `Used: ${formatTime(elapsed)} — Left: ${formatTime(remaining)}`;
-
-        barContainer.appendChild(label);
-        barContainer.appendChild(barFill);
-        scheduleContainer.appendChild(barContainer);
-        scheduleContainer.appendChild(timeInfo);
-      });
-    }
-
-    document.getElementById('darkToggle').addEventListener('change', e => {
-      document.body.classList.toggle('dark', e.target.checked);
-    });
-
-    document.getElementById('seventhToggle').addEventListener('change', updateSchedule);
-
-    updateSchedule();
-    setInterval(updateSchedule, 1000);
-  </script>
-</body>
-</html>
+        barFill.style.width =
