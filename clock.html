@@ -322,4 +322,26 @@
 
         const barFill = document.createElement('div');
         barFill.className = 'progress-bar-fill';
-        barFill.style.width =
+        barFill.style.width = percent + '%';
+        barFill.textContent = formatTime(remaining);
+
+        barContainer.appendChild(label);
+        barContainer.appendChild(barFill);
+        scheduleContainer.appendChild(barContainer);
+      });
+    }
+
+    document.getElementById('darkToggle').addEventListener('change', e => {
+      if (e.target.checked) document.body.classList.add('dark');
+      else document.body.classList.remove('dark');
+    });
+
+    document.getElementById('seventhToggle').addEventListener('change', () => {
+      updateSchedule();
+    });
+
+    setInterval(updateSchedule, 1000);
+    updateSchedule();
+  </script>
+</body>
+</html>
