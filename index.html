@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework Helper</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+ 
+  <div>
+    <a href="gamble.html" class="invisible-button"></a>
+  </div>
+
+    <h1>Welcome to Homework Helper</h1>
+  
+
+    <!-- Image Button for Calculator -->
+    <div class="calculator-button">
+        <a href="calculator.html">
+            <img src="https://images.vexels.com/content/127945/preview/hand-drawn-calculator-icon-50265e.png" alt="Calculator">
+        </a>
+    </div>
+    <!-- Image Button for clock -->
+    <div class="clock-button">
+        <a href="clock.html">
+            <img src="https://cdn-icons-png.flaticon.com/512/73/73184.png" alt="clock">
+        </a>
+    </div>
+
+    <!-- Cool S button -->
+    <div class="cool-s1">
+        <a href="Games.html">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/S-cool.svg/1200px-S-cool.svg.png" alt="Cool S">
+        </a>
+    </div>
+    <!-- Ruler button -->
+    <div class="ruler-button">
+        <a href="tools.html">
+            <img src="https://cdn.pixabay.com/photo/2023/02/11/01/46/ruler-7781879_1280.png" alt="ruler-button">
+        </a>
+    </div>
+    <!-- shop button -->
+    <div class="shop-button">
+        <a href="shop.html">
+            <img src="https://www.shareicon.net/download/2015/12/15/687910_sign_512x512.png" alt="shop-button">
+        </a>
+    </div>
+   <!-- box button -->
+    <div class="box-button">
+        <a href="https://forms.gle/bwj3ZM512J9kgrWa6">
+            <img src="https://news.wrexham.gov.uk/wp-content/uploads/2022/04/ballot-box-5566333.png" alt="shop-button">
+        </a>
+    </div>
+
+    <!-- Notebook lines -->
+    <div class="red-line"></div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mr Stick</title>
+  <style>
+    #pet1 {
+      display: none;
+      position: absolute;
+      background-size: contain;
+      background-repeat: no-repeat;
+      width: 300px;
+      height: 300px;
+    }
+    .speech-bubble1 {
+      position: absolute;
+      bottom: 65%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #fff;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      white-space: nowrap;
+      font-size: 14px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="pet1">
+    <div class="speech-bubble1" id="speech1"></div>
+  </div>
+  <script>
+    const petElement1 = document.getElementById("pet1");
+    const speechBubble1 = document.getElementById("speech1");
+    let petVisible1 = false;
+
+    petElement1.style.backgroundImage = "url('https://m.gjcdn.net/fireside-post-image/900/25083728-ll-auaf2hxu-v4.webp')";
+
+    const messages1 = ["Hello!", "I'm your new friend!", "Jumping around!", "Whee!", "Let's play!"];
+
+    function showPet1() {
+      if (!petVisible1) {
+        petElement1.style.display = "block";
+        petVisible1 = true;
+        movePet1();
+      }
+    }
+
+    function hidePet1() {
+      petElement1.style.display = "none";
+      petVisible1 = false;
+    }
+
+    function speak1(message) {
+      speechBubble1.textContent = message;
+      speechBubble1.style.display = "block";
+      setTimeout(() => {
+        speechBubble1.style.display = "none";
+      }, 2000);
+    }
+
+    function movePet1() {
+      if (!petVisible1) return;
+
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+
+      let currentX = parseInt(petElement1.style.left || 0);
+      let currentY = parseInt(petElement1.style.top || 0);
+
+      const targetX = Math.random() * (screenWidth - 100);
+      const targetY = Math.random() * (screenHeight - 100);
+
+      const stepX = (targetX - currentX) / 100;
+      const stepY = (targetY - currentY) / 100;
+
+      let steps = 0;
+
+      function walk1() {
+        if (steps < 100) {
+          currentX += stepX;
+          currentY += stepY;
+          petElement1.style.left = `${currentX}px`;
+          petElement1.style.top = `${currentY}px`;
+          steps++;
+          requestAnimationFrame(walk1);
+        } else {
+          if (Math.random() > 0.7) {
+            const message = messages1[Math.floor(Math.random() * messages1.length)];
+            speak1(message);
+          }
+          setTimeout(movePet1, 2000);
+        }
+      }
+
+      walk1();
+    }
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key.toLowerCase() === "s") {
+        if (petVisible1) {
+          hidePet1();
+        } else {
+          showPet1();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KupKace</title>
+  <style>
+    #pet2 {
+      display: none;
+      position: absolute;
+      background-size: contain;
+      background-repeat: no-repeat;
+      width: 300px;
+      height: 300px;
+    }
+    .speech-bubble2 {
+      position: absolute;
+      bottom: 65%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #fff;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      white-space: nowrap;
+      font-size: 14px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="pet2">
+    <div class="speech-bubble2" id="speech2"></div>
+  </div>
+  <script>
+    const petElement2 = document.getElementById("pet2");
+    const speechBubble2 = document.getElementById("speech2");
+    let petVisible2 = false;
+
+    petElement2.style.backgroundImage = "url('https://preview.redd.it/thats-one-v0-y8pkhegql2tb1.png?width=1000&format=png&auto=webp&s=62190294fdd071c081c7d0d352fd1ddd153b58f1')";
+
+    const messages2 = ["Hello!", "I'm your new friend!", "Jumping around!", "Whee!", "Let's play!"];
+
+    function showPet2() {
+      if (!petVisible2) {
+        petElement2.style.display = "block";
+        petVisible2 = true;
+        movePet2();
+      }
+    }
+
+    function hidePet2() {
+      petElement2.style.display = "none";
+      petVisible2 = false;
+    }
+
+    function speak2(message) {
+      speechBubble2.textContent = message;
+      speechBubble2.style.display = "block";
+      setTimeout(() => {
+        speechBubble2.style.display = "none";
+      }, 2000);
+    }
+
+    function movePet2() {
+      if (!petVisible2) return;
+
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+
+      let currentX = parseInt(petElement2.style.left || 0);
+      let currentY = parseInt(petElement2.style.top || 0);
+
+      const targetX = Math.random() * (screenWidth - 100);
+      const targetY = Math.random() * (screenHeight - 100);
+
+      const stepX = (targetX - currentX) / 100;
+      const stepY = (targetY - currentY) / 100;
+
+      let steps = 0;
+
+      function walk2() {
+        if (steps < 100) {
+          currentX += stepX;
+          currentY += stepY;
+          petElement2.style.left = `${currentX}px`;
+          petElement2.style.top = `${currentY}px`;
+          steps++;
+          requestAnimationFrame(walk2);
+        } else {
+          if (Math.random() > 0.7) {
+            const message = messages2[Math.floor(Math.random() * messages2.length)];
+            speak2(message);
+          }
+          setTimeout(movePet2, 2000);
+        }
+      }
+
+      walk2();
+    }
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key.toLowerCase() === "k") {
+        if (petVisible2) {
+          hidePet2();
+        } else {
+          showPet2();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keyboard Pet</title>
+  <style>
+    #pet {
+      display: none;
+      position: absolute;
+      background-size: contain;
+      background-repeat: no-repeat;
+      width: 300px;
+      height: 300px;
+    }
+    .speech-bubble {
+      position: absolute;
+      bottom: 65%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #fff;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      white-space: nowrap;
+      font-size: 14px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="pet">
+    <div class="speech-bubble" id="speech"></div>
+  </div>
+  <script>
+    const petElement = document.getElementById("pet");
+    const speechBubble = document.getElementById("speech");
+    let petVisible = false;
+
+    // Set your pet image
+    petElement.style.backgroundImage = "url('https://thecodex.wiki/images/b/bb/TheNoiseRender.png')";
+
+    // Random messages for the pet to say
+    const messages = [
+      "Hello!",
+      "I'm your new friend!",
+      "Jumping around!",
+      "Whee!",
+      "Let's play!",
+    ];
+
+    // Function to show the pet
+    function showPet() {
+      if (!petVisible) {
+        petElement.style.display = "block";
+        petVisible = true;
+        movePet();
+      }
+    }
+
+    // Function to hide the pet
+    function hidePet() {
+      petElement.style.display = "none";
+      petVisible = false;
+    }
+
+    // Function to display a speech bubble
+    function speak(message) {
+      speechBubble.textContent = message;
+      speechBubble.style.display = "block";
+      setTimeout(() => {
+        speechBubble.style.display = "none";
+      }, 2000);
+    }
+
+    // Function to move the pet around
+    function movePet() {
+      if (!petVisible) return;
+
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+
+      let currentX = parseInt(petElement.style.left || 0);
+      let currentY = parseInt(petElement.style.top || 0);
+
+      const targetX = Math.max(0, Math.min(Math.random() * (screenWidth - 100), screenWidth - 100));
+      const targetY = Math.max(0, Math.min(Math.random() * (screenHeight - 100), screenHeight - 100));
+
+      const stepX = (targetX - currentX) / 100; // Slower movement
+      const stepY = (targetY - currentY) / 100;
+
+      let steps = 0;
+
+      function walk() {
+        if (steps < 100) {
+          currentX += stepX;
+          currentY += stepY;
+          petElement.style.left = `${currentX}px`;
+          petElement.style.top = `${currentY}px`;
+          steps++;
+          requestAnimationFrame(walk);
+        } else {
+          if (Math.random() > 0.7) {
+            const message = messages[Math.floor(Math.random() * messages.length)];
+            speak(message);
+          }
+          setTimeout(movePet, 2000);
+        }
+      }
+
+      walk();
+    }
+
+    // Function to play a sound for "The Noise"
+    function playNoise() {
+      const audio = new Audio("https://www.soundjay.com/button/sounds/button-16.mp3");
+      audio.play();
+    }
+
+    // Listen for specific key presses
+    window.addEventListener("keydown", (event) => {
+      if (event.key.toLowerCase() === "n") { // Toggle pet visibility
+        if (petVisible) {
+          hidePet();
+        } else {
+          showPet();
+        }
+      } else if (event.key.toLowerCase() === "n") { // Play the noise
+        playNoise();
+      }
+    });
+  </script>
+</body>
+</html>
