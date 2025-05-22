@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Modern Clock Page</title>
+  <title>Schedule Tracker</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -30,23 +30,32 @@
     body {
       background-color: var(--bg-color);
       color: var(--text-color);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      padding-top: 70px;
       transition: background-color 0.3s, color 0.3s;
     }
 
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: var(--bg-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
+
     .clock {
-      font-size: 3rem;
-      margin-bottom: 2rem;
+      font-size: 1.5rem;
     }
 
     .toggle {
       background: var(--progress-bg);
       border: none;
-      padding: 0.6rem 1.2rem;
+      padding: 0.5rem 1rem;
       border-radius: 9999px;
       font-size: 1rem;
       cursor: pointer;
@@ -58,21 +67,147 @@
       background: var(--accent-color);
       color: white;
     }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 2rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--progress-bg);
+    }
+
+    .progress-container {
+      background: var(--progress-bg);
+      border-radius: 1rem;
+      overflow: hidden;
+      height: 20px;
+      margin-top: 0.5rem;
+    }
+
+    .progress {
+      height: 100%;
+      background: var(--accent-color);
+      width: 0%;
+      transition: width 1s linear;
+    }
+
+    .focus-toggle {
+      margin-bottom: 1rem;
+    }
+
+    .focus-toggle label {
+      margin-right: 1rem;
+      display: inline-block;
+    }
+
+    @media (max-width: 600px) {
+      .clock {
+        font-size: 1.2rem;
+      }
+
+      table, th, td {
+        font-size: 0.9rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="clock" id="clock"></div>
-  <button class="toggle" onclick="toggleTheme()">Toggle Theme</button>
+  <header>
+    <div class="clock" id="clock"></div>
+    <button class="toggle" onclick="toggleTheme()">Toggle Theme</button>
+  </header>
+
+  <div class="container">
+    <div class="focus-toggle" id="focus-toggle"></div>
+    <table>
+      <thead>
+        <tr><th>Period</th><th>Time</th><th>Progress</th></tr>
+      </thead>
+      <tbody id="schedule-table">
+        <!-- Schedule rows will be populated here -->
+      </tbody>
+    </table>
+  </div>
 
   <script>
+    const schedule = [
+      { period: '0', start: '07:00', end: '08:00' },
+      { period: '1', start: '08:10', end: '09:00' },
+      { period: '2', start: '09:05', end: '09:55' },
+      { period: '3', start: '10:05', end: '10:55' },
+      { period: '4', start: '11:00', end: '11:50' },
+      { period: 'Lunch', start: '11:50', end: '12:25' },
+      { period: '5', start: '12:30', end: '13:20' },
+      { period: '6', start: '13:25', end: '14:15' },
+      { period: '7', start: '14:25', end: '15:25' }
+    ];
+
     function updateClock() {
       const now = new Date();
       const time = now.toLocaleTimeString();
       document.getElementById('clock').textContent = time;
+      updateProgressBars(now);
     }
 
-    setInterval(updateClock, 1000);
-    updateClock();
+    function toMinutes(t) {
+      const [h, m] = t.split(':').map(Number);
+      return h * 60 + m;
+    }
+
+    function updateProgressBars(now) {
+      const nowMin = now.getHours() * 60 + now.getMinutes();
+      schedule.forEach((p, i) => {
+        const startMin = toMinutes(p.start);
+        const endMin = toMinutes(p.end);
+        let width = 0;
+        if (nowMin >= startMin && nowMin <= endMin) {
+          width = ((nowMin - startMin) / (endMin - startMin)) * 100;
+        } else if (nowMin > endMin) {
+          width = 100;
+        }
+        const progress = document.getElementById(`progress-${i}`);
+        if (progress) progress.style.width = `${width}%`;
+      });
+    }
+
+    function populateTable() {
+      const table = document.getElementById('schedule-table');
+      const toggleContainer = document.getElementById('focus-toggle');
+      schedule.forEach((p, i) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${p.period}</td>
+          <td>${p.start} - ${p.end}</td>
+          <td>
+            <div class="progress-container">
+              <div class="progress" id="progress-${i}"></div>
+            </div>
+          </td>
+        `;
+        table.appendChild(row);
+
+        const toggle = document.createElement('label');
+        toggle.innerHTML = `<input type="radio" name="focus" onchange="focusOn(${i})"> ${p.period}`;
+        toggleContainer.appendChild(toggle);
+      });
+    }
+
+    function focusOn(index) {
+      schedule.forEach((_, i) => {
+        const row = document.getElementById(`progress-${i}`).parentElement.parentElement.parentElement;
+        row.style.display = index === i ? '' : 'none';
+      });
+    }
 
     function toggleTheme() {
       const html = document.documentElement;
@@ -80,8 +215,10 @@
       html.setAttribute('data-theme', currentTheme === 'dark' ? 'light' : 'dark');
     }
 
-    // Set default theme
     document.documentElement.setAttribute('data-theme', 'light');
+    populateTable();
+    setInterval(updateClock, 1000);
+    updateClock();
   </script>
 </body>
 </html>
