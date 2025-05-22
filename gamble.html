@@ -96,8 +96,11 @@
       background-color: #ffc107;
       color: black;
     }
-    .message {
-      margin-top: 20px;
+    .bank-section {
+      margin-top: 30px;
+    }
+    .bank-message {
+      margin-top: 10px;
       font-size: 1.2rem;
       font-weight: bold;
     }
@@ -147,8 +150,18 @@
   <button class="button get-money-button" id="getMoneyButton">Get Money</button>
   <div class="message" id="message">Your Balance: $100</div>
 
+  <div class="bank-section">
+    <h2>Bank System</h2>
+    <input type="number" class="bet-input" id="depositAmount" placeholder="Deposit Amount" min="1" />
+    <button class="button" id="depositButton">Deposit to Bank</button>
+    <input type="number" class="bet-input" id="withdrawAmount" placeholder="Withdraw Amount" min="1" />
+    <button class="button" id="withdrawButton">Withdraw from Bank</button>
+    <div class="bank-message" id="bankMessage">Bank Balance: $0</div>
+  </div>
+
   <script>
     let balance = 100;
+    let bankBalance = 0;
 
     // Slot machine logic
     function playSlot(bet) {
@@ -221,31 +234,61 @@
       }, 3000);
     }
 
-    // Event listeners
+    // Bank deposit logic
+    document.getElementById("depositButton").addEventListener("click", function() {
+      const depositAmount = parseInt(document.getElementById("depositAmount").value, 10);
+      if (isNaN(depositAmount) || depositAmount <= 0 || depositAmount > balance) {
+        alert("Invalid or insufficient funds for deposit.");
+        return;
+      }
+      balance -= depositAmount;
+      bankBalance += depositAmount;
+      document.getElementById("bankMessage").textContent = `Bank Balance: $${bankBalance}`;
+      document.getElementById("message").textContent = `Your Balance: $${balance}`;
+    });
+
+    // Bank withdrawal logic
+    document.getElementById("withdrawButton").addEventListener("click", function() {
+      const withdrawAmount = parseInt(document.getElementById("withdrawAmount").value, 10);
+      if (isNaN(withdrawAmount) || withdrawAmount <= 0 || withdrawAmount > bankBalance) {
+        alert("Invalid or insufficient funds for withdrawal.");
+        return;
+      }
+      balance += withdrawAmount;
+      bankBalance -= withdrawAmount;
+      document.getElementById("bankMessage").textContent = `Bank Balance: $${bankBalance}`;
+      document.getElementById("message").textContent = `Your Balance: $${balance}`;
+    });
+
+    // Play slot button
     document.getElementById("playSlotButton").addEventListener("click", function() {
-      const bet = parseInt(document.getElementById("slotBetAmount").value, 10);
-      if (isNaN(bet) || bet <= 0 || balance < bet) {
-        document.getElementById("message").textContent = "Invalid or insufficient funds for slot bet.";
+      const betAmount = parseInt(document.getElementById("slotBetAmount").value, 10);
+      if (isNaN(betAmount) || betAmount <= 0 || betAmount > balance) {
+        alert("Invalid bet amount.");
         return;
       }
-      balance -= bet;
-      playSlot(bet);
+      playSlot(betAmount);
+      balance -= betAmount;
+      document.getElementById("message").textContent = `Your Balance: $${balance}`;
     });
 
+    // Play roulette button
     document.getElementById("playRouletteButton").addEventListener("click", function() {
-      const bet = parseInt(document.getElementById("rouletteBetAmount").value, 10);
+      const betAmount = parseInt(document.getElementById("rouletteBetAmount").value, 10);
       const choice = document.getElementById("rouletteChoice").value;
-      if (isNaN(bet) || bet <= 0 || balance < bet) {
-        document.getElementById("message").textContent = "Invalid or insufficient funds for roulette bet.";
+      if (isNaN(betAmount) || betAmount <= 0 || betAmount > balance) {
+        alert("Invalid bet amount.");
         return;
       }
-      balance -= bet;
-      playRoulette(bet, choice);
+      playRoulette(betAmount, choice);
+      balance -= betAmount;
+      document.getElementById("message").textContent = `Your Balance: $${balance}`;
     });
 
+    // Get money button
     document.getElementById("getMoneyButton").addEventListener("click", function() {
-      balance += 50;
-      document.getElementById("message").textContent = `You earned $50! New Balance: $${balance}`;
+      balance += 100;
+      document.getElementById("message").textContent = `Your Balance: $${balance}`;
     });
   </script>
 
