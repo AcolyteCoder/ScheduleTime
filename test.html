@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>School Schedule Progress</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #000000;
+      --accent: #4caf50;
+      --card: #f4f4f4;
+    }
+    [data-theme="dark"] {
+      --bg: #121212;
+      --text: #ffffff;
+      --accent: #4caf50;
+      --card: #1e1e1e;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 20px;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+    }
+
+    main {
+      padding-top: 80px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .period {
+      margin-bottom: 15px;
+      padding: 15px;
+      background: var(--card);
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .bar {
+      height: 20px;
+      background: #ccc;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+
+    .fill {
+      height: 100%;
+      background-color: var(--accent);
+      transition: width 1s linear;
+    }
+
+    .toggle {
+      cursor: pointer;
+      background: none;
+      border: 2px solid var(--text);
+      padding: 5px 10px;
+      border-radius: 6px;
+    }
+
+    .time-info {
+      font-size: 14px;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <header>
+    <div><strong id="clock">--:--:--</strong></div>
+    <button class="toggle" onclick="toggleTheme()">Toggle Theme</button>
+  </header>
+  <main id="schedule"></main>
+
+  <script>
+    const scheduleData = { /* Full schedule object here (your provided one) */ };
+
+    function toggleTheme() {
+      const body = document.body;
+      const theme = body.getAttribute('data-theme');
+      body.setAttribute('data-theme', theme === 'dark' ? 'light' : 'dark');
+    }
+
+    function getTodaySchedule() {
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const today = days[new Date().getDay()];
+      return scheduleData[today] || [];
+    }
+
+    function formatTime(ms) {
+      const totalSec = Math.floor(ms / 1000);
+      const min = Math.floor(totalSec / 60);
+      const sec = totalSec % 60;
+      return `${min}m ${sec}s`;
+    }
+
+    function renderSchedule() {
+      const container = document.getElementById('schedule');
+      container.innerHTML = '';
+      const now = new Date();
+
+      getTodaySchedule().forEach(period => {
+        const start = new Date();
+        const end = new Date();
+
+        const [sh, sm] = period.start.split(':');
+        const [eh, em] = period.end.split(':');
+        start.setHours(+sh, +sm, 0, 0);
+        end.setHours(+eh, +em, 0, 0);
+
+        const total = end - start;
+        const elapsed = now - start;
+        const remaining = end - now;
+
+        const progress = Math.max(0, Math.min(1, elapsed / total));
+
+        const div = document.createElement('div');
+        div.className = 'period';
+        div.innerHTML = `
+          <strong>${period.name}</strong>
+          <div class="bar">
+            <div class="fill" style="width: ${progress * 100}%"></div>
+          </div>
+          <div class="time-info">
+            ${remaining > 0 ? `${Math.floor(progress * 100)}% - ${formatTime(remaining)} left` : 'Finished'}
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const clock = document.getElementById('clock');
+      clock.textContent = now.toLocaleTimeString();
+    }
+
+    function loop() {
+      updateClock();
+      renderSchedule();
+    }
+
+    // Your full schedule data here:
+    const scheduleData = /* Paste your full JSON here */;
+
+    loop();
+    setInterval(loop, 1000);
+  </script>
+</body>
+</html>
