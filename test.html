@@ -88,9 +88,9 @@
 
     .progress-container {
       background: var(--progress-bg);
-      border-radius: 1rem;
+      border-radius: 9999px;
       overflow: hidden;
-      height: 20px;
+      height: 16px;
       margin-top: 0.5rem;
     }
 
@@ -99,6 +99,7 @@
       background: var(--accent-color);
       width: 0%;
       transition: width 1s linear;
+      border-radius: 9999px;
     }
 
     .focus-toggle {
@@ -200,12 +201,15 @@
         toggle.innerHTML = `<input type="radio" name="focus" onchange="focusOn(${i})"> ${p.period}`;
         toggleContainer.appendChild(toggle);
       });
+      const allToggle = document.createElement('label');
+      allToggle.innerHTML = `<input type="radio" name="focus" onchange="focusOn(-1)" checked> All`;
+      toggleContainer.insertBefore(allToggle, toggleContainer.firstChild);
     }
 
     function focusOn(index) {
       schedule.forEach((_, i) => {
-        const row = document.getElementById(`progress-${i}`).parentElement.parentElement.parentElement;
-        row.style.display = index === i ? '' : 'none';
+        const row = document.getElementById(`progress-${i}`).closest('tr');
+        row.style.display = index === -1 || index === i ? '' : 'none';
       });
     }
 
