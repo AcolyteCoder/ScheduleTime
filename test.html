@@ -3,199 +3,85 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Progress Bar Schedule</title>
+  <title>Modern Clock Page</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-color: #ffffff;
-      --text-color: #111111;
-      --accent: #3b82f6;
-      --bar-bg: #e5e7eb;
+      --text-color: #000000;
+      --accent-color: #3b82f6;
+      --progress-bg: #e5e7eb;
     }
+
     [data-theme="dark"] {
       --bg-color: #121212;
       --text-color: #ffffff;
-      --accent: #3b82f6;
-      --bar-bg: #2c2c2c;
+      --accent-color: #10b981;
+      --progress-bg: #2c2c2c;
     }
+
     * {
-      box-sizing: border-box;
-    }
-    body {
-      font-family: 'Inter', 'Roboto', 'Segoe UI', sans-serif;
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
       background-color: var(--bg-color);
       color: var(--text-color);
-      transition: background 0.3s, color 0.3s;
-    }
-    header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background-color: var(--bg-color);
-      border-bottom: 1px solid #ccc;
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
-      padding: 10px 20px;
-      z-index: 1000;
+      justify-content: center;
+      height: 100vh;
+      transition: background-color 0.3s, color 0.3s;
     }
-    .clock, .theme-toggle, .view-toggle {
+
+    .clock {
+      font-size: 3rem;
+      margin-bottom: 2rem;
+    }
+
+    .toggle {
+      background: var(--progress-bg);
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 9999px;
       font-size: 1rem;
-    }
-    main {
-      padding: 100px 20px 20px;
-      max-width: 800px;
-      margin: auto;
-    }
-    .period {
-      margin: 20px 0;
-    }
-    .period h3 {
-      margin: 0 0 5px;
-    }
-    .progress-container {
-      background-color: var(--bar-bg);
-      border-radius: 8px;
-      overflow: hidden;
-      height: 20px;
-    }
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background-color: var(--accent);
-      transition: width 1s;
-    }
-    .remaining-time {
-      font-size: 0.9rem;
-      margin-top: 5px;
-    }
-    .theme-toggle input, .view-toggle select {
       cursor: pointer;
+      color: var(--text-color);
+      transition: background 0.3s;
     }
-    .view-toggle select {
-      padding: 4px;
-    }
-    @media (max-width: 600px) {
-      header {
-        flex-direction: column;
-        gap: 10px;
-      }
+
+    .toggle:hover {
+      background: var(--accent-color);
+      color: white;
     }
   </style>
 </head>
-<body data-theme="light">
-  <header>
-    <div class="clock" id="clock">--:--:--</div>
-    <div class="theme-toggle">
-      <label>
-        <input type="checkbox" id="themeSwitch" /> 🌙 Toggle Theme
-      </label>
-    </div>
-    <div class="view-toggle">
-      <label>
-        View: 
-        <select id="viewMode">
-          <option value="all">All Periods</option>
-          <option value="current">Current Period Only</option>
-        </select>
-      </label>
-    </div>
-  </header>
-
-  <main id="schedule"></main>
+<body>
+  <div class="clock" id="clock"></div>
+  <button class="toggle" onclick="toggleTheme()">Toggle Theme</button>
 
   <script>
-    const schedule = [
-      { name: "0 Period", start: "07:00", end: "08:00" },
-      { name: "1st Period", start: "08:10", end: "09:00" },
-      { name: "2nd Period", start: "09:05", end: "09:55" },
-      { name: "3rd Period", start: "10:05", end: "10:55" },
-      { name: "4th Period", start: "11:00", end: "11:50" },
-      { name: "Lunch", start: "11:50", end: "12:25" },
-      { name: "5th Period", start: "12:30", end: "13:20" },
-      { name: "6th Period", start: "13:25", end: "14:15" },
-      { name: "7th Period", start: "14:25", end: "15:25" }
-    ];
-
-    const scheduleEl = document.getElementById("schedule");
-
-    function timeToSeconds(time) {
-      const [h, m] = time.split(":".map(Number));
-      return h * 3600 + m * 60;
-    }
-
-    function updateSchedule() {
-      const now = new Date();
-      const nowSec = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-      const view = document.getElementById("viewMode").value;
-
-      scheduleEl.innerHTML = "";
-      let foundCurrent = false;
-
-      schedule.forEach(period => {
-        const startSec = timeToSeconds(period.start);
-        const endSec = timeToSeconds(period.end);
-        const total = endSec - startSec;
-        const elapsed = nowSec - startSec;
-        const remaining = endSec - nowSec;
-        const percent = Math.min(Math.max((elapsed / total) * 100, 0), 100);
-        const isActive = nowSec >= startSec && nowSec < endSec;
-
-        if (view === "current" && !isActive) return;
-        if (view === "current" && isActive) foundCurrent = true;
-
-        const container = document.createElement("div");
-        container.className = "period";
-
-        const title = document.createElement("h3");
-        title.textContent = period.name;
-
-        const progressContainer = document.createElement("div");
-        progressContainer.className = "progress-container";
-
-        const progressBar = document.createElement("div");
-        progressBar.className = "progress-bar";
-        progressBar.style.width = `${percent}%`;
-
-        if (remaining <= 120 && remaining > 0) {
-          progressBar.style.backgroundColor = "#facc15"; // yellow for warning
-        }
-
-        const timeLeft = document.createElement("div");
-        timeLeft.className = "remaining-time";
-        timeLeft.textContent = remaining > 0 ? `${Math.floor(remaining / 60)}m ${remaining % 60}s left` : "Completed";
-
-        progressContainer.appendChild(progressBar);
-        container.appendChild(title);
-        container.appendChild(progressContainer);
-        container.appendChild(timeLeft);
-        scheduleEl.appendChild(container);
-      });
-
-      if (view === "current" && !foundCurrent) {
-        scheduleEl.innerHTML = "<p>No active period at this time.</p>";
-      }
-    }
-
     function updateClock() {
       const now = new Date();
-      document.getElementById("clock").textContent = now.toLocaleTimeString();
+      const time = now.toLocaleTimeString();
+      document.getElementById('clock').textContent = time;
     }
 
-    setInterval(() => {
-      updateClock();
-      updateSchedule();
-    }, 1000);
-
-    document.getElementById("themeSwitch").addEventListener("change", e => {
-      document.body.dataset.theme = e.target.checked ? "dark" : "light";
-    });
-
-    document.getElementById("viewMode").addEventListener("change", updateSchedule);
-
+    setInterval(updateClock, 1000);
     updateClock();
-    updateSchedule();
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme');
+      html.setAttribute('data-theme', currentTheme === 'dark' ? 'light' : 'dark');
+    }
+
+    // Set default theme
+    document.documentElement.setAttribute('data-theme', 'light');
   </script>
 </body>
 </html>
