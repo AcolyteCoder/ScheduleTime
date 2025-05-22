@@ -197,92 +197,15 @@
       const now = new Date();
       const time = now.toLocaleTimeString();
       document.getElementById('clock').textContent = time;
-      updateProgressBars(now);
     }
 
-    function toMinutes(t) {
-      const [h, m] = t.split(':').map(Number);
-      return h * 60 + m;
-    }
-
-    function formatTimeLeft(minutesLeft) {
-      const mins = Math.floor(minutesLeft);
-      const secs = Math.round((minutesLeft - mins) * 60);
-      return `${mins}m ${secs}s left`;
-    }
-
-    function updateProgressBars(now) {
-      const nowMin = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
-      schedule.forEach((p, i) => {
-        const startMin = toMinutes(p.start);
-        const endMin = toMinutes(p.end);
-        let width = 0;
-        let label = '';
-        if (nowMin >= startMin && nowMin <= endMin) {
-          const progress = (nowMin - startMin) / (endMin - startMin);
-          width = progress * 100;
-          const timeLeft = endMin - nowMin;
-          label = `${Math.round(progress * 100)}% – ${formatTimeLeft(timeLeft)}`;
-        } else if (nowMin > endMin) {
-          width = 100;
-          label = `100% – 0m 0s left`;
-        } else {
-          width = 0;
-          const timeLeft = endMin - nowMin;
-          label = `0% – ${formatTimeLeft(timeLeft)}`;
-        }
-        const progress = document.getElementById(`progress-${i}`);
-        const progressLabel = document.getElementById(`progress-label-${i}`);
-        if (progress) progress.style.width = `${width}%`;
-        if (progressLabel) progressLabel.textContent = label;
-      });
-    }
-
-    function populateTable() {
-      const table = document.getElementById('schedule-table');
-      const toggleContainer = document.getElementById('focus-toggle');
-
-      const allToggle = document.createElement('label');
-      allToggle.innerHTML = `<input type="radio" name="focus" onchange="focusOn(-1)" checked> All`;
-      toggleContainer.appendChild(allToggle);
-
-      schedule.forEach((p, i) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${p.period}</td>
-          <td>${p.start} - ${p.end}</td>
-          <td>
-            <div class="progress-container">
-              <div class="progress" id="progress-${i}"></div>
-              <div class="progress-label" id="progress-label-${i}">0%</div>
-            </div>
-          </td>
-        `;
-        table.appendChild(row);
-
-        const toggle = document.createElement('label');
-        toggle.innerHTML = `<input type="radio" name="focus" onchange="focusOn(${i})"> ${p.period}`;
-        toggleContainer.appendChild(toggle);
-      });
-    }
-
-    function focusOn(index) {
-      schedule.forEach((_, i) => {
-        const row = document.getElementById(`progress-${i}`).closest('tr');
-        row.style.display = (index === -1 || index === i) ? '' : 'none';
-      });
-    }
-
-    function toggleTheme() {
-      const html = document.documentElement;
-      const currentTheme = html.getAttribute('data-theme');
-      html.setAttribute('data-theme', currentTheme === 'dark' ? 'light' : 'dark');
-    }
-
-    document.documentElement.setAttribute('data-theme', 'light');
-    populateTable();
     setInterval(updateClock, 1000);
     updateClock();
+
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute("data-theme");
+      document.documentElement.setAttribute("data-theme", currentTheme === "dark" ? "light" : "dark");
+    }
   </script>
 </body>
 </html>
