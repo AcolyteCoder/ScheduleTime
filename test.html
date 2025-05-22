@@ -206,54 +206,151 @@
       const currentTheme = document.documentElement.getAttribute("data-theme");
       document.documentElement.setAttribute("data-theme", currentTheme === "dark" ? "light" : "dark");
     }
-     const schedule = [
-    { period: '0', start: '07:00', end: '08:00' },
-    { period: '1', start: '08:10', end: '09:00' },
-    { period: '2', start: '09:05', end: '09:55' },
-    { period: '3', start: '10:05', end: '10:55' },
-    { period: '4', start: '11:00', end: '11:50' },
-    { period: 'Lunch', start: '11:50', end: '12:25' },
-    { period: '5', start: '12:30', end: '13:20' },
-    { period: '6', start: '13:25', end: '14:15' },
-    { period: '7', start: '14:25', end: '15:25' }
-  ];
+     const scheduleData = {
+      'Monday': [
+                { name: '0 Period', start: '07:00', end: '08:00' },
+                { name: 'Passing 1', start: '08:00', end: '08:10' },
+                { name: '1st Period', start: '08:10', end: '09:00' },
+                { name: 'Passing 2', start: '09:00', end: '09:05' },
+                { name: '2nd Period', start: '09:05', end: '09:55' },
+                { name: 'Passing 3', start: '09:55', end: '10:05' },
+                { name: '3rd Period', start: '10:05', end: '10:55' },
+                { name: 'Passing 4', start: '10:55', end: '11:00' },
+                { name: '4th Period', start: '11:00', end: '11:50' },
+                { name: 'Lunch', start: '11:50', end: '12:25' },
+                { name: 'Passing 5', start: '12:25', end: '12:30' },
+                { name: '5th Period', start: '12:30', end: '13:20' },
+                { name: 'Passing 6', start: '13:20', end: '13:25' },
+                { name: '6th Period', start: '13:25', end: '14:15' },
+                { name: 'Passing 7', start: '14:15', end: '14:25' },
+                { name: '7th Period', start: '14:25', end: '15:25' }
+            ],
+            'Tuesday': [
+                  { name: 'Passing 1', start: '08:00', end: '08:10' },
+                { name: '1st Period', start: '08:10', end: '09:00' },
+                { name: 'Passing 2', start: '09:00', end: '09:05' },
+                { name: '2nd Period', start: '09:05', end: '09:55' },
+                { name: 'Passing 3', start: '09:55', end: '10:05' },
+                { name: '3rd Period', start: '10:05', end: '10:55' },
+                { name: 'Passing 4', start: '10:55', end: '11:00' },
+                { name: '4th Period', start: '11:00', end: '11:50' },
+                { name: 'Lunch', start: '11:50', end: '12:25' },
+                { name: 'Passing 5', start: '12:25', end: '12:30' },
+                { name: '5th Period', start: '12:30', end: '13:20' },
+                { name: 'Passing 6', start: '13:20', end: '13:25' },
+                { name: '6th Period', start: '13:25', end: '14:15' },
+                { name: 'Passing 7', start: '14:15', end: '14:25' },
+                { name: '7th Period', start: '14:25', end: '15:25' }
+            ],
+            'Wednesday': [
+                { name: '0 Period', start: '07:00', end: '08:00' },
+                { name: 'Passing 1', start: '08:00', end: '08:10' },
+                { name: '1st Period', start: '08:10', end: '09:35' },
+                { name: 'Passing 2', start: '09:35', end: '09:45' },
+                { name: '3rd Period', start: '09:45', end: '11:10' },
+                { name: 'Passing 3', start: '11:10', end: '11:15' },
+                { name: 'SOAR', start: '11:15', end: '12:05' },
+                { name: 'Lunch', start: '12:05', end: '12:40' },
+                { name: 'Passing 4', start: '12:40', end: '12:50' },
+                { name: '5th Period', start: '12:50', end: '14:15' },
+                { name: 'Passing 5', start: '14:15', end: '14:25' },
+                { name: '7th Period', start: '14:25', end: '15:25' }
+            ],
+            'Thursday': [
+                { name: '0 Period', start: '07:00', end: '08:00' },
+                { name: 'Passing 1', start: '08:00', end: '08:10' },
+                { name: '2nd Period', start: '08:10', end: '09:35' },
+                { name: 'Passing 2', start: '09:35', end: '09:45' },
+                { name: '4th Period', start: '09:45', end: '11:10' },
+                { name: 'Passing 3', start: '11:10', end: '11:15' },
+                { name: 'SOAR', start: '11:15', end: '12:05' },
+                { name: 'Lunch', start: '12:05', end: '12:40' },
+                { name: 'Passing 4', start: '12:40', end: '12:50' },
+                { name: '6th Period', start: '12:50', end: '14:15' },
+                { name: 'Passing 5', start: '14:15', end: '14:25' },
+                { name: '7th Period', start: '14:25', end: '15:25' }
+            ],
+            'Friday': [
+                { name: '1st Period', start: '09:00', end: '09:45' },
+                { name: 'Passing 1', start: '09:45', end: '09:50' },
+                { name: '2nd Period', start: '09:50', end: '10:35' },
+                { name: 'Passing 2', start: '10:35', end: '10:45' },
+                { name: '3rd Period', start: '10:45', end: '11:30' },
+                { name: 'Passing 3', start: '11:30', end: '11:35' },
+                { name: '4th Period', start: '11:35', end: '12:20' },
+                { name: 'Lunch', start: '12:20', end: '12:55' },
+                { name: 'Passing 4', start: '12:55', end: '13:00' },
+                { name: '5th Period', start: '13:00', end: '13:45' },
+                { name: 'Passing 5', start: '13:45', end: '13:50' },
+                { name: '6th Period', start: '13:50', end: '14:35' }
+      ]
+      // Add other days as needed
+    };
 
-  function parseTime(timeStr) {
-    const [h, m] = timeStr.split(':').map(Number);
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
-  }
+    const scheduleContainer = document.getElementById('scheduleContainer');
 
-  function updateScheduleProgress() {
-    const table = document.getElementById('schedule-table');
-    table.innerHTML = '';
+    function formatTime(ms) {
+      if (ms <= 0) return 'Ended';
+      const totalSeconds = Math.floor(ms / 1000);
+      const h = Math.floor(totalSeconds / 3600);
+      const m = Math.floor((totalSeconds % 3600) / 60);
+      const s = totalSeconds % 60;
+      return (h > 0 ? h + 'h ' : '') + (m > 0 ? m + 'm ' : '') + s + 's';
+    }
 
-    const now = new Date();
+    function updateSchedule() {
+      scheduleContainer.innerHTML = '';
+      const now = new Date();
+      const dayName = now.toLocaleDateString('en-US', { weekday: 'long' });
+      const periods = scheduleData[dayName] || scheduleData['Monday']; // fallback to Monday
 
-    schedule.forEach(({ period, start, end }) => {
-      const startTime = parseTime(start);
-      const endTime = parseTime(end);
-      const totalDuration = endTime - startTime;
-      const elapsed = Math.max(0, Math.min(now - startTime, totalDuration));
-      const percentage = (elapsed / totalDuration) * 100;
+      const include7th = document.getElementById('seventhToggle').checked;
 
-      const row = document.createElement('tr');
-      row.innerHTML = 
-        <td>${period}</td>
-        <td>${start} - ${end}</td>
-        <td>
-          <div class="progress-container">
-            <div class="progress" style="width: ${percentage}%"></div>
-            <div class="progress-label">${Math.floor(percentage)}%</div>
-          </div>
-        </td>
-      ;
-      table.appendChild(row);
+      periods.forEach(period => {
+        if (!include7th && period.name.includes('7th')) return;
+
+        const start = new Date();
+        const [sh, sm] = period.start.split(':');
+        start.setHours(sh, sm, 0, 0);
+
+        const end = new Date();
+        const [eh, em] = period.end.split(':');
+        end.setHours(eh, em, 0, 0);
+
+        const totalDuration = end - start;
+        const elapsed = Math.min(Math.max(now - start, 0), totalDuration);
+        const remaining = Math.max(end - now, 0);
+        const percent = (elapsed / totalDuration) * 100;
+
+        const barContainer = document.createElement('div');
+        barContainer.className = 'progress-bar-container';
+
+        const label = document.createElement('div');
+        label.className = 'progress-label';
+        label.textContent = period.name;
+
+        const barFill = document.createElement('div');
+        barFill.className = 'progress-bar-fill';
+        barFill.style.width = percent + '%';
+        barFill.textContent = formatTime(remaining);
+
+        barContainer.appendChild(label);
+        barContainer.appendChild(barFill);
+        scheduleContainer.appendChild(barContainer);
+      });
+    }
+
+    document.getElementById('darkToggle').addEventListener('change', e => {
+      if (e.target.checked) document.body.classList.add('dark');
+      else document.body.classList.remove('dark');
     });
-  }
 
-  setInterval(updateScheduleProgress, 1000);
-  updateScheduleProgress();
+    document.getElementById('seventhToggle').addEventListener('change', () => {
+      updateSchedule();
+    });
+
+    setInterval(updateSchedule, 1000);
+    updateSchedule();
   </script>
 </body>
 </html>
