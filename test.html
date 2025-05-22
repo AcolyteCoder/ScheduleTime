@@ -40,11 +40,11 @@
       padding: 10px 20px;
       z-index: 1000;
     }
-    .clock, .theme-toggle {
+    .clock, .theme-toggle, .view-toggle {
       font-size: 1rem;
     }
     main {
-      padding: 80px 20px 20px;
+      padding: 100px 20px 20px;
       max-width: 800px;
       margin: auto;
     }
@@ -70,11 +70,12 @@
       font-size: 0.9rem;
       margin-top: 5px;
     }
-    .theme-toggle input {
+    .theme-toggle input, .view-toggle select {
       cursor: pointer;
-      transform: scale(1.2);
     }
-
+    .view-toggle select {
+      padding: 4px;
+    }
     @media (max-width: 600px) {
       header {
         flex-direction: column;
@@ -88,15 +89,21 @@
     <div class="clock" id="clock">--:--:--</div>
     <div class="theme-toggle">
       <label>
-        <input type="checkbox" id="themeSwitch" />
-        🌙 Toggle Theme
+        <input type="checkbox" id="themeSwitch" /> 🌙 Toggle Theme
+      </label>
+    </div>
+    <div class="view-toggle">
+      <label>
+        View: 
+        <select id="viewMode">
+          <option value="all">All Periods</option>
+          <option value="current">Current Period Only</option>
+        </select>
       </label>
     </div>
   </header>
 
-  <main id="schedule">
-    <!-- Periods will be populated here -->
-  </main>
+  <main id="schedule"></main>
 
   <script>
     const schedule = [
@@ -114,15 +121,17 @@
     const scheduleEl = document.getElementById("schedule");
 
     function timeToSeconds(time) {
-      const [h, m] = time.split(":").map(Number);
+      const [h, m] = time.split(":".map(Number));
       return h * 3600 + m * 60;
     }
 
     function updateSchedule() {
       const now = new Date();
       const nowSec = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+      const view = document.getElementById("viewMode").value;
 
       scheduleEl.innerHTML = "";
+      let foundCurrent = false;
 
       schedule.forEach(period => {
         const startSec = timeToSeconds(period.start);
@@ -131,6 +140,10 @@
         const elapsed = nowSec - startSec;
         const remaining = endSec - nowSec;
         const percent = Math.min(Math.max((elapsed / total) * 100, 0), 100);
+        const isActive = nowSec >= startSec && nowSec < endSec;
+
+        if (view === "current" && !isActive) return;
+        if (view === "current" && isActive) foundCurrent = true;
 
         const container = document.createElement("div");
         container.className = "period";
@@ -145,15 +158,13 @@
         progressBar.className = "progress-bar";
         progressBar.style.width = `${percent}%`;
 
+        if (remaining <= 120 && remaining > 0) {
+          progressBar.style.backgroundColor = "#facc15"; // yellow for warning
+        }
+
         const timeLeft = document.createElement("div");
         timeLeft.className = "remaining-time";
-        timeLeft.textContent = remaining > 0
-          ? `${Math.floor(remaining / 60)}m ${remaining % 60}s left`
-          : "Completed";
-
-        if (remaining <= 120 && remaining > 0) {
-          progressBar.style.backgroundColor = "#facc15"; // highlight color (yellow)
-        }
+        timeLeft.textContent = remaining > 0 ? `${Math.floor(remaining / 60)}m ${remaining % 60}s left` : "Completed";
 
         progressContainer.appendChild(progressBar);
         container.appendChild(title);
@@ -161,6 +172,10 @@
         container.appendChild(timeLeft);
         scheduleEl.appendChild(container);
       });
+
+      if (view === "current" && !foundCurrent) {
+        scheduleEl.innerHTML = "<p>No active period at this time.</p>";
+      }
     }
 
     function updateClock() {
@@ -173,11 +188,12 @@
       updateSchedule();
     }, 1000);
 
-    document.getElementById("themeSwitch").addEventListener("change", (e) => {
+    document.getElementById("themeSwitch").addEventListener("change", e => {
       document.body.dataset.theme = e.target.checked ? "dark" : "light";
     });
 
-    // Initial load
+    document.getElementById("viewMode").addEventListener("change", updateSchedule);
+
     updateClock();
     updateSchedule();
   </script>
