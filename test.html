@@ -3,204 +3,183 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Schedule Progress Bars</title>
+  <title>Progress Bar Schedule</title>
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f4f4f4;
-      color: #111;
-      transition: background-color 0.3s, color 0.3s;
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #111111;
+      --accent: #3b82f6;
+      --bar-bg: #e5e7eb;
     }
-    body.dark {
-      background-color: #111;
-      color: #f4f4f4;
+    [data-theme="dark"] {
+      --bg-color: #121212;
+      --text-color: #ffffff;
+      --accent: #3b82f6;
+      --bar-bg: #2c2c2c;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', 'Roboto', 'Segoe UI', sans-serif;
+      margin: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background 0.3s, color 0.3s;
     }
     header {
       position: fixed;
       top: 0;
-      width: 100%;
-      background-color: #222;
-      color: #fff;
-      padding: 10px 20px;
+      left: 0;
+      right: 0;
+      background-color: var(--bg-color);
+      border-bottom: 1px solid #ccc;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 10px 20px;
       z-index: 1000;
     }
-    header .clock {
-      font-size: 1.2em;
-    }
-    header .theme-toggle {
-      cursor: pointer;
-      padding: 5px 10px;
-      border: 1px solid #fff;
-      border-radius: 4px;
+    .clock, .theme-toggle {
+      font-size: 1rem;
     }
     main {
       padding: 80px 20px 20px;
-      max-width: 900px;
+      max-width: 800px;
       margin: auto;
     }
     .period {
-      margin-bottom: 20px;
+      margin: 20px 0;
+    }
+    .period h3 {
+      margin: 0 0 5px;
     }
     .progress-container {
-      background-color: #ddd;
-      border-radius: 10px;
+      background-color: var(--bar-bg);
+      border-radius: 8px;
       overflow: hidden;
+      height: 20px;
     }
     .progress-bar {
-      height: 20px;
-      background-color: #4caf50;
-      width: 0;
-      transition: width 1s linear;
+      height: 100%;
+      width: 0%;
+      background-color: var(--accent);
+      transition: width 1s;
     }
-    .time-remaining {
-      font-size: 0.9em;
+    .remaining-time {
+      font-size: 0.9rem;
       margin-top: 5px;
     }
+    .theme-toggle input {
+      cursor: pointer;
+      transform: scale(1.2);
+    }
+
     @media (max-width: 600px) {
-      .period-name {
-        font-size: 0.9em;
+      header {
+        flex-direction: column;
+        gap: 10px;
       }
     }
   </style>
 </head>
-<body>
+<body data-theme="light">
   <header>
-    <div class="clock" id="clock">00:00:00</div>
-    <div class="theme-toggle" onclick="toggleTheme()">Toggle Theme</div>
+    <div class="clock" id="clock">--:--:--</div>
+    <div class="theme-toggle">
+      <label>
+        <input type="checkbox" id="themeSwitch" />
+        🌙 Toggle Theme
+      </label>
+    </div>
   </header>
-  <main id="schedule"></main>
+
+  <main id="schedule">
+    <!-- Periods will be populated here -->
+  </main>
 
   <script>
-    const schedules = {
-      'Monday': [
-        { name: '0 Period', start: '07:00', end: '08:00' },
-        { name: 'Passing 1', start: '08:00', end: '08:10' },
-        { name: '1st Period', start: '08:10', end: '09:00' },
-        { name: 'Passing 2', start: '09:00', end: '09:05' },
-        { name: '2nd Period', start: '09:05', end: '09:55' },
-        { name: 'Passing 3', start: '09:55', end: '10:05' },
-        { name: '3rd Period', start: '10:05', end: '10:55' },
-        { name: 'Passing 4', start: '10:55', end: '11:00' },
-        { name: '4th Period', start: '11:00', end: '11:50' },
-        { name: 'Lunch', start: '11:50', end: '12:25' },
-        { name: 'Passing 5', start: '12:25', end: '12:30' },
-        { name: '5th Period', start: '12:30', end: '13:20' },
-        { name: 'Passing 6', start: '13:20', end: '13:25' },
-        { name: '6th Period', start: '13:25', end: '14:15' },
-        { name: 'Passing 7', start: '14:15', end: '14:25' },
-        { name: '7th Period', start: '14:25', end: '15:25' }
-      ],
-      'Tuesday': [
-        { name: 'Passing 1', start: '08:00', end: '08:10' },
-        { name: '1st Period', start: '08:10', end: '09:00' },
-        { name: 'Passing 2', start: '09:00', end: '09:05' },
-        { name: '2nd Period', start: '09:05', end: '09:55' },
-        { name: 'Passing 3', start: '09:55', end: '10:05' },
-        { name: '3rd Period', start: '10:05', end: '10:55' },
-        { name: 'Passing 4', start: '10:55', end: '11:00' },
-        { name: '4th Period', start: '11:00', end: '11:50' },
-        { name: 'Lunch', start: '11:50', end: '12:25' },
-        { name: 'Passing 5', start: '12:25', end: '12:30' },
-        { name: '5th Period', start: '12:30', end: '13:20' },
-        { name: 'Passing 6', start: '13:20', end: '13:25' },
-        { name: '6th Period', start: '13:25', end: '14:15' },
-        { name: 'Passing 7', start: '14:15', end: '14:25' },
-        { name: '7th Period', start: '14:25', end: '15:25' }
-      ],
-      'Wednesday': [
-        { name: '0 Period', start: '07:00', end: '08:00' },
-        { name: 'Passing 1', start: '08:00', end: '08:10' },
-        { name: '1st Period', start: '08:10', end: '09:35' },
-        { name: 'Passing 2', start: '09:35', end: '09:45' },
-        { name: '3rd Period', start: '09:45', end: '11:10' },
-        { name: 'Passing 3', start: '11:10', end: '11:15' },
-        { name: 'SOAR', start: '11:15', end: '12:05' },
-        { name: 'Lunch', start: '12:05', end: '12:40' },
-        { name: 'Passing 4', start: '12:40', end: '12:50' },
-        { name: '5th Period', start: '12:50', end: '14:15' },
-        { name: 'Passing 5', start: '14:15', end: '14:25' },
-        { name: '7th Period', start: '14:25', end: '15:25' }
-      ],
-      'Thursday': [
-        { name: '0 Period', start: '07:00', end: '08:00' },
-        { name: 'Passing 1', start: '08:00', end: '08:10' },
-        { name: '2nd Period', start: '08:10', end: '09:35' },
-        { name: 'Passing 2', start: '09:35', end: '09:45' },
-        { name: '4th Period', start: '09:45', end: '11:10' },
-        { name: 'Passing 3', start: '11:10', end: '11:15' },
-        { name: 'SOAR', start: '11:15', end: '12:05' },
-        { name: 'Lunch', start: '12:05', end: '12:40' },
-        { name: 'Passing 4', start: '12:40', end: '12:50' },
-        { name: '6th Period', start: '12:50', end: '14:15' },
-        { name: 'Passing 5', start: '14:15', end: '14:25' },
-        { name: '7th Period', start: '14:25', end: '15:25' }
-      ],
-      'Friday': [
-        { name: '1st Period', start: '09:00', end: '09:45' },
-        { name: 'Passing 1', start: '09:45', end: '09:50' },
-        { name: '2nd Period', start: '09:50', end: '10:35' },
-        { name: 'Passing 2', start: '10:35', end: '10:45' },
-        { name: '3rd Period', start: '10:45', end: '11:30' },
-        { name: 'Passing 3', start: '11:30', end: '11:35' },
-        { name: '4th Period', start: '11:35', end: '12:20' },
-        { name: 'Lunch', start: '12:20', end: '12:55' },
-        { name: 'Passing 4', start: '12:55', end: '13:00' },
-        { name: '5th Period', start: '13:00', end: '13:45' },
-        { name: 'Passing 5', start: '13:45', end: '13:50' },
-        { name: '6th Period', start: '13:50', end: '14:35' }
-      ]
-    };
+    const schedule = [
+      { name: "0 Period", start: "07:00", end: "08:00" },
+      { name: "1st Period", start: "08:10", end: "09:00" },
+      { name: "2nd Period", start: "09:05", end: "09:55" },
+      { name: "3rd Period", start: "10:05", end: "10:55" },
+      { name: "4th Period", start: "11:00", end: "11:50" },
+      { name: "Lunch", start: "11:50", end: "12:25" },
+      { name: "5th Period", start: "12:30", end: "13:20" },
+      { name: "6th Period", start: "13:25", end: "14:15" },
+      { name: "7th Period", start: "14:25", end: "15:25" }
+    ];
 
-    function toggleTheme() {
-      document.body.classList.toggle('dark');
+    const scheduleEl = document.getElementById("schedule");
+
+    function timeToSeconds(time) {
+      const [h, m] = time.split(":").map(Number);
+      return h * 3600 + m * 60;
+    }
+
+    function updateSchedule() {
+      const now = new Date();
+      const nowSec = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+
+      scheduleEl.innerHTML = "";
+
+      schedule.forEach(period => {
+        const startSec = timeToSeconds(period.start);
+        const endSec = timeToSeconds(period.end);
+        const total = endSec - startSec;
+        const elapsed = nowSec - startSec;
+        const remaining = endSec - nowSec;
+        const percent = Math.min(Math.max((elapsed / total) * 100, 0), 100);
+
+        const container = document.createElement("div");
+        container.className = "period";
+
+        const title = document.createElement("h3");
+        title.textContent = period.name;
+
+        const progressContainer = document.createElement("div");
+        progressContainer.className = "progress-container";
+
+        const progressBar = document.createElement("div");
+        progressBar.className = "progress-bar";
+        progressBar.style.width = `${percent}%`;
+
+        const timeLeft = document.createElement("div");
+        timeLeft.className = "remaining-time";
+        timeLeft.textContent = remaining > 0
+          ? `${Math.floor(remaining / 60)}m ${remaining % 60}s left`
+          : "Completed";
+
+        if (remaining <= 120 && remaining > 0) {
+          progressBar.style.backgroundColor = "#facc15"; // highlight color (yellow)
+        }
+
+        progressContainer.appendChild(progressBar);
+        container.appendChild(title);
+        container.appendChild(progressContainer);
+        container.appendChild(timeLeft);
+        scheduleEl.appendChild(container);
+      });
     }
 
     function updateClock() {
       const now = new Date();
-      document.getElementById('clock').textContent = now.toLocaleTimeString();
-    }
-    setInterval(updateClock, 1000);
-
-    function renderSchedule() {
-      const container = document.getElementById('schedule');
-      container.innerHTML = '';
-      const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
-      const periods = schedules[today] || [];
-      const now = new Date();
-
-      periods.forEach(period => {
-        const start = new Date();
-        const end = new Date();
-        const [sh, sm] = period.start.split(':');
-        const [eh, em] = period.end.split(':');
-        start.setHours(+sh, +sm, 0);
-        end.setHours(+eh, +em, 0);
-        const total = end - start;
-        const elapsed = now - start;
-        const percent = Math.min(100, Math.max(0, (elapsed / total) * 100));
-        const remaining = Math.max(0, end - now);
-        const minutes = Math.floor(remaining / 60000);
-        const seconds = Math.floor((remaining % 60000) / 1000);
-
-        const div = document.createElement('div');
-        div.className = 'period';
-        div.innerHTML = `
-          <div class="period-name"><strong>${period.name}</strong></div>
-          <div class="progress-container">
-            <div class="progress-bar" style="width: ${percent}%"></div>
-          </div>
-          <div class="time-remaining">${minutes}m ${seconds}s left</div>
-        `;
-        container.appendChild(div);
-      });
+      document.getElementById("clock").textContent = now.toLocaleTimeString();
     }
 
-    setInterval(renderSchedule, 1000);
-    renderSchedule();
+    setInterval(() => {
+      updateClock();
+      updateSchedule();
+    }, 1000);
+
+    document.getElementById("themeSwitch").addEventListener("change", (e) => {
+      document.body.dataset.theme = e.target.checked ? "dark" : "light";
+    });
+
+    // Initial load
+    updateClock();
+    updateSchedule();
   </script>
 </body>
 </html>
