@@ -190,55 +190,33 @@
   </div>
 
   <script>
-  const schedule = [
-    { period: '0', start: '07:00', end: '08:00' },
-    { period: '1', start: '08:10', end: '09:00' },
-    { period: '2', start: '09:05', end: '09:55' },
-    { period: '3', start: '10:05', end: '10:55' },
-    { period: '4', start: '11:00', end: '11:50' },
-    { period: 'Lunch', start: '11:50', end: '12:25' },
-    { period: '5', start: '12:30', end: '13:20' },
-    { period: '6', start: '13:25', end: '14:15' },
-    { period: '7', start: '14:25', end: '20:25' }
-  ];
+    const schedule = [
+      { period: '0', start: '07:00', end: '08:00' },
+      { period: '1', start: '08:10', end: '09:00' },
+      { period: '2', start: '09:05', end: '09:55' },
+      { period: '3', start: '10:05', end: '10:55' },
+      { period: '4', start: '11:00', end: '11:50' },
+      { period: 'Lunch', start: '11:50', end: '12:25' },
+      { period: '5', start: '12:30', end: '13:20' },
+      { period: '6', start: '13:25', end: '14:15' },
+      { period: '7', start: '14:25', end: '15:25' }
+    ];
 
-  function parseTime(timeStr) {
-    const [h, m] = timeStr.split(':').map(Number);
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
-  }
+    function updateClock() {
+      const now = new Date();
+      const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const date = now.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
+      document.getElementById('clock').textContent = time;
+      document.getElementById('date').textContent = date;
+    }
 
-  function updateScheduleProgress() {
-    const table = document.getElementById('schedule-table');
-    table.innerHTML = '';
+    setInterval(updateClock, 1000);
+    updateClock();
 
-    const now = new Date();
-
-    schedule.forEach(({ period, start, end }) => {
-      const startTime = parseTime(start);
-      const endTime = parseTime(end);
-      const totalDuration = endTime - startTime;
-      const elapsed = Math.max(0, Math.min(now - startTime, totalDuration));
-      const percentage = (elapsed / totalDuration) * 100;
-
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${period}</td>
-        <td>${start} - ${end}</td>
-        <td>
-          <div class="progress-container">
-            <div class="progress" style="width: ${percentage}%"></div>
-            <div class="progress-label">${Math.floor(percentage)}%</div>
-          </div>
-        </td>
-      `;
-      table.appendChild(row);
-    });
-  }
-
-  setInterval(updateScheduleProgress, 1000);
-  updateScheduleProgress();
-</script>
-
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute("data-theme");
+      document.documentElement.setAttribute("data-theme", currentTheme === "dark" ? "light" : "dark");
+    }
+  </script>
 </body>
 </html>
