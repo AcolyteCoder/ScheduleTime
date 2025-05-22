@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Schedule Tracker</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -11,6 +11,7 @@
       --text-color: #000000;
       --accent-color: #3b82f6;
       --progress-bg: #e5e7eb;
+      --highlight-color: #dbeafe;
     }
 
     [data-theme="dark"] {
@@ -18,6 +19,7 @@
       --text-color: #ffffff;
       --accent-color: #10b981;
       --progress-bg: #2c2c2c;
+      --highlight-color: #1e293b;
     }
 
     * {
@@ -63,7 +65,6 @@
       align-items: center;
       padding: 1rem 2rem;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      z-index: 1000;
     }
 
     .clock {
@@ -73,7 +74,6 @@
     .date {
       margin-left: 1rem;
       font-size: 1rem;
-      color: var(--text-color);
     }
 
     .toggle {
@@ -84,7 +84,6 @@
       font-size: 1rem;
       cursor: pointer;
       color: var(--text-color);
-      transition: background 0.3s;
     }
 
     .toggle:hover {
@@ -110,12 +109,15 @@
       border-bottom: 1px solid var(--progress-bg);
     }
 
+    tr.current {
+      background-color: var(--highlight-color);
+    }
+
     .progress-container {
       background: var(--progress-bg);
       border-radius: 1rem;
       overflow: hidden;
       height: 24px;
-      margin-top: 0.5rem;
       position: relative;
     }
 
@@ -133,15 +135,6 @@
       font-size: 0.85rem;
       line-height: 24px;
       color: var(--text-color);
-    }
-
-    .focus-toggle {
-      margin-bottom: 1rem;
-    }
-
-    .focus-toggle label {
-      margin-right: 1rem;
-      display: inline-block;
     }
 
     @media (max-width: 600px) {
@@ -177,83 +170,154 @@
     </header>
 
     <div class="container">
-      <div class="focus-toggle" id="focus-toggle"></div>
-      <table>
+      <table aria-label="Schedule Table">
         <thead>
           <tr><th>Period</th><th>Time</th><th>Progress</th></tr>
         </thead>
-        <tbody id="schedule-table">
-          <!-- Schedule rows will be populated here -->
-        </tbody>
+        <tbody id="schedule-table"></tbody>
       </table>
     </div>
   </div>
 
   <script>
-    
+    const schedule = [
+      'Monday': [
+                { name: '0 Period', start: '07:00', end: '08:00' },
+                { name: 'Passing 1', start: '08:00', end: '08:10' },
+                { name: '1st Period', start: '08:10', end: '09:00' },
+                { name: 'Passing 2', start: '09:00', end: '09:05' },
+                { name: '2nd Period', start: '09:05', end: '09:55' },
+                { name: 'Passing 3', start: '09:55', end: '10:05' },
+                { name: '3rd Period', start: '10:05', end: '10:55' },
+                { name: 'Passing 4', start: '10:55', end: '11:00' },
+                { name: '4th Period', start: '11:00', end: '11:50' },
+                { name: 'Lunch', start: '11:50', end: '12:25' },
+                { name: 'Passing 5', start: '12:25', end: '12:30' },
+                { name: '5th Period', start: '12:30', end: '13:20' },
+                { name: 'Passing 6', start: '13:20', end: '13:25' },
+                { name: '6th Period', start: '13:25', end: '14:15' },
+                { name: 'Passing 7', start: '14:15', end: '14:25' },
+                { name: '7th Period', start: '14:25', end: '15:25' }
+            ],
+            'Tuesday': [
+                  { name: 'Passing 1', start: '08:00', end: '08:10' },
+                { name: '1st Period', start: '08:10', end: '09:00' },
+                { name: 'Passing 2', start: '09:00', end: '09:05' },
+                { name: '2nd Period', start: '09:05', end: '09:55' },
+                { name: 'Passing 3', start: '09:55', end: '10:05' },
+                { name: '3rd Period', start: '10:05', end: '10:55' },
+                { name: 'Passing 4', start: '10:55', end: '11:00' },
+                { name: '4th Period', start: '11:00', end: '11:50' },
+                { name: 'Lunch', start: '11:50', end: '12:25' },
+                { name: 'Passing 5', start: '12:25', end: '12:30' },
+                { name: '5th Period', start: '12:30', end: '13:20' },
+                { name: 'Passing 6', start: '13:20', end: '13:25' },
+                { name: '6th Period', start: '13:25', end: '14:15' },
+                { name: 'Passing 7', start: '14:15', end: '14:25' },
+                { name: '7th Period', start: '14:25', end: '15:25' }
+            ],
+            'Wednesday': [
+                { name: '0 Period', start: '07:00', end: '08:00' },
+                { name: 'Passing 1', start: '08:00', end: '08:10' },
+                { name: '1st Period', start: '08:10', end: '09:35' },
+                { name: 'Passing 2', start: '09:35', end: '09:45' },
+                { name: '3rd Period', start: '09:45', end: '11:10' },
+                { name: 'Passing 3', start: '11:10', end: '11:15' },
+                { name: 'SOAR', start: '11:15', end: '12:05' },
+                { name: 'Lunch', start: '12:05', end: '12:40' },
+                { name: 'Passing 4', start: '12:40', end: '12:50' },
+                { name: '5th Period', start: '12:50', end: '14:15' },
+                { name: 'Passing 5', start: '14:15', end: '14:25' },
+                { name: '7th Period', start: '14:25', end: '15:25' }
+            ],
+            'Thursday': [
+                { name: '0 Period', start: '07:00', end: '08:00' },
+                { name: 'Passing 1', start: '08:00', end: '08:10' },
+                { name: '2nd Period', start: '08:10', end: '09:35' },
+                { name: 'Passing 2', start: '09:35', end: '09:45' },
+                { name: '4th Period', start: '09:45', end: '11:10' },
+                { name: 'Passing 3', start: '11:10', end: '11:15' },
+                { name: 'SOAR', start: '11:15', end: '12:05' },
+                { name: 'Lunch', start: '12:05', end: '12:40' },
+                { name: 'Passing 4', start: '12:40', end: '12:50' },
+                { name: '6th Period', start: '12:50', end: '14:15' },
+                { name: 'Passing 5', start: '14:15', end: '14:25' },
+                { name: '7th Period', start: '14:25', end: '15:25' }
+            ],
+            'Friday': [
+                { name: '1st Period', start: '09:00', end: '09:45' },
+                { name: 'Passing 1', start: '09:45', end: '09:50' },
+                { name: '2nd Period', start: '09:50', end: '10:35' },
+                { name: 'Passing 2', start: '10:35', end: '10:45' },
+                { name: '3rd Period', start: '10:45', end: '11:30' },
+                { name: 'Passing 3', start: '11:30', end: '11:35' },
+                { name: '4th Period', start: '11:35', end: '12:20' },
+                { name: 'Lunch', start: '12:20', end: '12:55' },
+                { name: 'Passing 4', start: '12:55', end: '13:00' },
+                { name: '5th Period', start: '13:00', end: '13:45' },
+                { name: 'Passing 5', start: '13:45', end: '13:50' },
+                { name: '6th Period', start: '13:50', end: '14:35' }
+
     function updateClock() {
       const now = new Date();
-      const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      const date = now.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
-      document.getElementById('clock').textContent = time;
-      document.getElementById('date').textContent = date;
+      document.getElementById('clock').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      document.getElementById('date').textContent = now.toLocaleDateString(undefined, {
+        weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'
+      });
     }
-
-    setInterval(updateClock, 1000);
-    updateClock();
 
     function toggleTheme() {
       const currentTheme = document.documentElement.getAttribute("data-theme");
       document.documentElement.setAttribute("data-theme", currentTheme === "dark" ? "light" : "dark");
     }
-     const schedule = [
-    { period: '0', start: '07:00', end: '08:00' },
-    { period: '1', start: '08:10', end: '09:00' },
-    { period: '2', start: '09:05', end: '09:55' },
-    { period: '3', start: '10:05', end: '10:55' },
-    { period: '4', start: '11:00', end: '11:50' },
-    { period: 'Lunch', start: '11:50', end: '12:25' },
-    { period: '5', start: '12:30', end: '13:20' },
-    { period: '6', start: '13:25', end: '14:15' },
-    { period: '7', start: '14:25', end: '15:25' }
-  ];
 
-  function parseTime(timeStr) {
-    const [h, m] = timeStr.split(':').map(Number);
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
-  }
+    function parseTime(timeStr) {
+      const [h, m] = timeStr.split(':').map(Number);
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
+    }
 
-  function updateScheduleProgress() {
-    const table = document.getElementById('schedule-table');
-    table.innerHTML = '';
+    function updateScheduleProgress() {
+      const table = document.getElementById('schedule-table');
+      table.innerHTML = '';
+      const now = new Date();
+      let currentFound = false;
 
-    const now = new Date();
+      schedule.forEach(({ period, start, end }) => {
+        const startTime = parseTime(start);
+        const endTime = parseTime(end);
 
-    schedule.forEach(({ period, start, end }) => {
-      const startTime = parseTime(start);
-      const endTime = parseTime(end);
-      const totalDuration = endTime - startTime;
-      const elapsed = Math.max(0, Math.min(now - startTime, totalDuration));
-      const percentage = (elapsed / totalDuration) * 100;
+        if (now > endTime) return; // Skip past periods
 
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${period}</td>
-        <td>${start} - ${end}</td>
-        <td>
-          <div class="progress-container">
-            <div class="progress" style="width: ${percentage}%"></div>
-            <div class="progress-label">${Math.floor(percentage)}%</div>
-          </div>
-        </td>
-      `;
-      table.appendChild(row);
-    });
-  }
+        const totalDuration = endTime - startTime;
+        const elapsed = Math.max(0, Math.min(now - startTime, totalDuration));
+        const percentage = (elapsed / totalDuration) * 100;
+        const secondsRemaining = Math.floor((endTime - now) / 1000);
 
-  setInterval(updateScheduleProgress, 1000);
-  updateScheduleProgress();
+        const row = document.createElement('tr');
+        if (now >= startTime && now <= endTime && !currentFound) {
+          row.classList.add('current');
+          currentFound = true;
+        }
+
+        row.innerHTML = `
+          <td>${period}</td>
+          <td>${start} - ${end}</td>
+          <td>
+            <div class="progress-container">
+              <div class="progress" style="width: ${percentage}%"></div>
+              <div class="progress-label">${Math.floor(percentage)}% - ${secondsRemaining}s left</div>
+            </div>
+          </td>
+        `;
+        table.appendChild(row);
+      });
+    }
+
+    setInterval(updateClock, 1000);
+    setInterval(updateScheduleProgress, 1000);
+    updateClock();
+    updateScheduleProgress();
   </script>
 </body>
 </html>
