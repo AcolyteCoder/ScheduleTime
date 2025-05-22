@@ -70,6 +70,12 @@
       font-size: 1.5rem;
     }
 
+    .date {
+      margin-left: 1rem;
+      font-size: 1rem;
+      color: var(--text-color);
+    }
+
     .toggle {
       background: var(--progress-bg);
       border: none;
@@ -117,7 +123,7 @@
       height: 100%;
       background: var(--accent-color);
       width: 0%;
-      transition: width 1s linear;
+      transition: width 0.5s ease-in-out;
     }
 
     .progress-label {
@@ -163,7 +169,10 @@
 
   <div class="main-content">
     <header>
-      <div class="clock" id="clock"></div>
+      <div>
+        <span class="clock" id="clock"></span>
+        <span class="date" id="date"></span>
+      </div>
       <button class="toggle" onclick="toggleTheme()">Toggle Theme</button>
     </header>
 
@@ -195,8 +204,10 @@
 
     function updateClock() {
       const now = new Date();
-      const time = now.toLocaleTimeString();
+      const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const date = now.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
       document.getElementById('clock').textContent = time;
+      document.getElementById('date').textContent = date;
     }
 
     setInterval(updateClock, 1000);
