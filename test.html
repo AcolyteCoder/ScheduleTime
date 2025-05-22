@@ -30,15 +30,33 @@
     body {
       background-color: var(--bg-color);
       color: var(--text-color);
-      padding-top: 70px;
+      display: flex;
+      min-height: 100vh;
       transition: background-color 0.3s, color 0.3s;
     }
 
+    nav {
+      width: 200px;
+      background-color: var(--progress-bg);
+      padding: 1rem;
+      height: 100vh;
+    }
+
+    nav a {
+      display: block;
+      color: var(--text-color);
+      text-decoration: none;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
     header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
       background-color: var(--bg-color);
       display: flex;
       justify-content: space-between;
@@ -69,9 +87,9 @@
     }
 
     .container {
-      max-width: 900px;
-      margin: auto;
+      flex: 1;
       padding: 2rem;
+      overflow-y: auto;
     }
 
     table {
@@ -104,13 +122,11 @@
 
     .progress-label {
       position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      color: #fff;
-      font-size: 0.8rem;
+      width: 100%;
+      text-align: center;
+      font-size: 0.85rem;
       line-height: 24px;
-      white-space: nowrap;
+      color: var(--text-color);
     }
 
     .focus-toggle {
@@ -123,6 +139,10 @@
     }
 
     @media (max-width: 600px) {
+      nav {
+        display: none;
+      }
+
       .clock {
         font-size: 1.2rem;
       }
@@ -134,21 +154,30 @@
   </style>
 </head>
 <body>
-  <header>
-    <div class="clock" id="clock"></div>
-    <button class="toggle" onclick="toggleTheme()">Toggle Theme</button>
-  </header>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">Schedule</a>
+    <a href="#">Settings</a>
+    <a href="#">Help</a>
+  </nav>
 
-  <div class="container">
-    <div class="focus-toggle" id="focus-toggle"></div>
-    <table>
-      <thead>
-        <tr><th>Period</th><th>Time</th><th>Progress</th></tr>
-      </thead>
-      <tbody id="schedule-table">
-        <!-- Schedule rows will be populated here -->
-      </tbody>
-    </table>
+  <div class="main-content">
+    <header>
+      <div class="clock" id="clock"></div>
+      <button class="toggle" onclick="toggleTheme()">Toggle Theme</button>
+    </header>
+
+    <div class="container">
+      <div class="focus-toggle" id="focus-toggle"></div>
+      <table>
+        <thead>
+          <tr><th>Period</th><th>Time</th><th>Progress</th></tr>
+        </thead>
+        <tbody id="schedule-table">
+          <!-- Schedule rows will be populated here -->
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <script>
@@ -176,10 +205,10 @@
       return h * 60 + m;
     }
 
-    function formatTimeRemaining(minutes) {
-      const m = Math.floor(minutes);
-      const s = Math.floor((minutes - m) * 60);
-      return `${m}m ${s}s left`;
+    function formatTimeLeft(minutesLeft) {
+      const mins = Math.floor(minutesLeft);
+      const secs = Math.round((minutesLeft - mins) * 60);
+      return `${mins}m ${secs}s left`;
     }
 
     function updateProgressBars(now) {
@@ -188,37 +217,44 @@
         const startMin = toMinutes(p.start);
         const endMin = toMinutes(p.end);
         let width = 0;
-        let remaining = '';
+        let label = '';
         if (nowMin >= startMin && nowMin <= endMin) {
           const progress = (nowMin - startMin) / (endMin - startMin);
           width = progress * 100;
-          remaining = formatTimeRemaining(endMin - nowMin);
+          const timeLeft = endMin - nowMin;
+          label = `${Math.round(progress * 100)}% – ${formatTimeLeft(timeLeft)}`;
         } else if (nowMin > endMin) {
           width = 100;
+          label = `100% – 0m 0s left`;
+        } else {
+          width = 0;
+          const timeLeft = endMin - nowMin;
+          label = `0% – ${formatTimeLeft(timeLeft)}`;
         }
-        const bar = document.getElementById(`progress-${i}`);
-        const label = document.getElementById(`progress-label-${i}`);
-        if (bar) bar.style.width = `${width}%`;
-        if (label) label.textContent = `${Math.floor(width)}% ${remaining}`;
+        const progress = document.getElementById(`progress-${i}`);
+        const progressLabel = document.getElementById(`progress-label-${i}`);
+        if (progress) progress.style.width = `${width}%`;
+        if (progressLabel) progressLabel.textContent = label;
       });
     }
 
     function populateTable() {
       const table = document.getElementById('schedule-table');
       const toggleContainer = document.getElementById('focus-toggle');
-      const allBtn = document.createElement('label');
-      allBtn.innerHTML = `<input type="radio" name="focus" onchange="focusOn(-1)" checked> All`;
-      toggleContainer.appendChild(allBtn);
+
+      const allToggle = document.createElement('label');
+      allToggle.innerHTML = `<input type="radio" name="focus" onchange="focusOn(-1)" checked> All`;
+      toggleContainer.appendChild(allToggle);
+
       schedule.forEach((p, i) => {
         const row = document.createElement('tr');
-        row.id = `row-${i}`;
         row.innerHTML = `
           <td>${p.period}</td>
           <td>${p.start} - ${p.end}</td>
           <td>
             <div class="progress-container">
               <div class="progress" id="progress-${i}"></div>
-              <div class="progress-label" id="progress-label-${i}"></div>
+              <div class="progress-label" id="progress-label-${i}">0%</div>
             </div>
           </td>
         `;
@@ -232,8 +268,8 @@
 
     function focusOn(index) {
       schedule.forEach((_, i) => {
-        const row = document.getElementById(`row-${i}`);
-        row.style.display = index === -1 || index === i ? '' : 'none';
+        const row = document.getElementById(`progress-${i}`).closest('tr');
+        row.style.display = (index === -1 || index === i) ? '' : 'none';
       });
     }
 
