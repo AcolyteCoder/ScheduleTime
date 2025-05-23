@@ -3,122 +3,99 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>School Schedule Tracker</title>
+  <title>School Schedule Progress</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-color: #ffffff;
       --text-color: #000000;
-      --accent-color: #4caf50;
-      --bar-bg: #e0e0e0;
-      --transition-speed: 0.3s;
+      --accent-color: #007bff;
+      --progress-bg: #e0e0e0;
     }
 
     [data-theme="dark"] {
       --bg-color: #121212;
       --text-color: #ffffff;
-      --bar-bg: #333333;
+      --progress-bg: #333333;
     }
 
     * {
-      transition: background-color var(--transition-speed), color var(--transition-speed);
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
     }
 
     body {
-      font-family: 'Inter', sans-serif;
       background-color: var(--bg-color);
       color: var(--text-color);
-      margin: 0;
-      padding: 0;
+      padding-top: 60px;
+      transition: background 0.3s, color 0.3s;
     }
 
     header {
       position: fixed;
       top: 0;
-      left: 0;
-      right: 0;
+      width: 100%;
       background-color: var(--bg-color);
+      color: var(--text-color);
+      padding: 10px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem 2rem;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      z-index: 1000;
-      transition: background-color var(--transition-speed), color var(--transition-speed);
+      border-bottom: 1px solid #ccc;
+      z-index: 10;
     }
 
     .clock {
-      font-size: 1.2rem;
-      transition: color var(--transition-speed);
+      font-size: 1rem;
     }
 
-    .theme-toggle {
-      cursor: pointer;
-      padding: 0.5rem 1rem;
-      border: none;
-      background-color: var(--accent-color);
-      color: white;
-      border-radius: 5px;
-      transition: background-color var(--transition-speed), transform var(--transition-speed);
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    .theme-toggle:hover {
-      transform: scale(1.05);
-    }
-
-    main {
-      margin-top: 80px;
-      padding: 1rem;
-      max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
+    .progress-section {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
     .period {
-      margin: 1rem 0;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeInUp 0.5s ease forwards;
-    }
-
-    .period:nth-child(1) { animation-delay: 0.1s; }
-    .period:nth-child(2) { animation-delay: 0.2s; }
-    .period:nth-child(3) { animation-delay: 0.3s; }
-
-    @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .period h3 {
-      margin: 0 0 0.25rem;
-    }
-
-    .progress-container {
-      background-color: var(--bar-bg);
-      border-radius: 10px;
-      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
     .progress-bar {
       height: 20px;
+      background-color: var(--progress-bg);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 100%;
       background-color: var(--accent-color);
       width: 0%;
-      transition: width 1s ease-in-out;
+      transition: width 1s linear;
     }
 
-    .time-left {
+    .countdown {
       font-size: 0.9rem;
-      margin-top: 0.25rem;
     }
 
-    @media (max-width: 600px) {
-      header {
-        flex-direction: column;
-        gap: 0.5rem;
-        text-align: center;
+    .highlight {
+      color: red;
+      font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      .progress-section {
+        padding: 10px;
       }
     }
   </style>
@@ -126,67 +103,104 @@
 <body data-theme="light">
   <header>
     <div class="clock" id="clock">--:--:--</div>
-    <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
-  </header>
-  <main id="schedule">
-    <div class="period" id="period-1">
-      <h3>1st Period</h3>
-      <div class="progress-container">
-        <div class="progress-bar" id="bar-1"></div>
-      </div>
-      <div class="time-left" id="time-1">--m --s left</div>
+    <div class="toggle-container">
+      <label for="theme-toggle">🌗</label>
+      <input type="checkbox" id="theme-toggle" />
     </div>
-    <!-- Repeat .period blocks for each class period -->
+  </header>
+
+  <main class="progress-section" id="progress-section">
+    <!-- Dynamic schedule goes here -->
   </main>
 
   <script>
-    const periods = [
-      { id: 1, start: "08:10", end: "09:00" },
-      // Add more periods as needed
-    ];
+    const schedule = {
+      'Monday': [
+        { name: '0 Period', start: '07:00', end: '08:00' },
+        { name: 'Passing 1', start: '08:00', end: '08:10' },
+        { name: '1st Period', start: '08:10', end: '09:00' },
+        { name: 'Passing 2', start: '09:00', end: '09:05' },
+        { name: '2nd Period', start: '09:05', end: '09:55' },
+        { name: 'Passing 3', start: '09:55', end: '10:05' },
+        { name: '3rd Period', start: '10:05', end: '10:55' },
+        { name: 'Passing 4', start: '10:55', end: '11:00' },
+        { name: '4th Period', start: '11:00', end: '11:50' },
+        { name: 'Lunch', start: '11:50', end: '12:25' },
+        { name: 'Passing 5', start: '12:25', end: '12:30' },
+        { name: '5th Period', start: '12:30', end: '13:20' },
+        { name: 'Passing 6', start: '13:20', end: '13:25' },
+        { name: '6th Period', start: '13:25', end: '14:15' },
+        { name: 'Passing 7', start: '14:15', end: '14:25' },
+        { name: '7th Period', start: '14:25', end: '15:25' }
+      ] // add the rest later
+    };
+
+    function getCurrentDay() {
+      return new Date().toLocaleString('en-US', { weekday: 'long' });
+    }
 
     function updateClock() {
       const now = new Date();
-      const timeStr = now.toLocaleTimeString();
-      document.getElementById('clock').textContent = timeStr;
+      document.getElementById('clock').textContent = now.toLocaleTimeString();
     }
 
-    function updateProgress() {
+    function getTimeInMinutes(timeStr) {
+      const [h, m] = timeStr.split(':').map(Number);
+      return h * 60 + m;
+    }
+
+    function updateProgressBars() {
       const now = new Date();
-      const nowMinutes = now.getHours() * 60 + now.getMinutes();
+      const minutesNow = now.getHours() * 60 + now.getMinutes();
+      const today = getCurrentDay();
+      const periods = schedule[today] || [];
+      const container = document.getElementById('progress-section');
+      container.innerHTML = '';
 
       periods.forEach(period => {
-        const startParts = period.start.split(":").map(Number);
-        const endParts = period.end.split(":").map(Number);
-        const startMinutes = startParts[0] * 60 + startParts[1];
-        const endMinutes = endParts[0] * 60 + endParts[1];
-        const total = endMinutes - startMinutes;
-        const elapsed = nowMinutes - startMinutes;
+        const start = getTimeInMinutes(period.start);
+        const end = getTimeInMinutes(period.end);
+        const duration = end - start;
+        const elapsed = Math.max(0, Math.min(duration, minutesNow - start));
+        const percentage = Math.round((elapsed / duration) * 100);
 
-        const progress = Math.max(0, Math.min(1, elapsed / total));
-        const percent = progress * 100;
-        document.getElementById(`bar-${period.id}`).style.width = `${percent}%`;
+        const remainingMins = duration - elapsed;
+        const remainingSecs = 60 - now.getSeconds();
 
-        const remaining = Math.max(0, (endMinutes - nowMinutes) * 60 - now.getSeconds());
-        const minutes = Math.floor(remaining / 60);
-        const seconds = remaining % 60;
-        document.getElementById(`time-${period.id}`).textContent = `${minutes}m ${seconds}s left`;
+        const periodDiv = document.createElement('div');
+        periodDiv.className = 'period';
+
+        const title = document.createElement('div');
+        title.textContent = period.name;
+
+        const bar = document.createElement('div');
+        bar.className = 'progress-bar';
+        const fill = document.createElement('div');
+        fill.className = 'progress';
+        fill.style.width = `${percentage}%`;
+        bar.appendChild(fill);
+
+        const countdown = document.createElement('div');
+        countdown.className = 'countdown';
+        countdown.textContent = `${remainingMins}m ${remainingSecs}s left`;
+        if (remainingMins < 2) countdown.classList.add('highlight');
+
+        periodDiv.appendChild(title);
+        periodDiv.appendChild(bar);
+        periodDiv.appendChild(countdown);
+
+        container.appendChild(periodDiv);
       });
     }
 
-    function toggleTheme() {
-      const body = document.body;
-      const current = body.getAttribute("data-theme");
-      body.setAttribute("data-theme", current === "light" ? "dark" : "light");
-    }
-
-    setInterval(() => {
-      updateClock();
-      updateProgress();
-    }, 1000);
+    document.getElementById('theme-toggle').addEventListener('change', function () {
+      document.body.setAttribute('data-theme', this.checked ? 'dark' : 'light');
+    });
 
     updateClock();
-    updateProgress();
+    setInterval(updateClock, 1000);
+    updateProgressBars();
+    setInterval(updateProgressBars, 1000);
   </script>
 </body>
 </html>
