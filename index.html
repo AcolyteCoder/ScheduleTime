@@ -1,229 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homework Helper</title>
-    <link rel="stylesheet" href="index.css">
-</head>
-<body>
-    <div class="text-overlay">
-        Homework helper was made with inspiration from school progress by Grant Garbe and with help from Grant Garbe.
-        Here we begin, in a place that feels oddly familiar but impossible to describe. The air smells like forgotten dreams, and the ground beneath us seems to hum, though no one dares to ask why. "<a href="hint1.html" class="clickable-word">Its here</a>", said the guide with a flourish, "this is where it all starts."
-        
-        No one in the group knew what he meant. Was it here that history was made? Was it here that mysteries were born? Or was it just a random patch of earth he pointed to because he liked the way the sun hit it at that exact moment? Regardless, everyone nodded as if they understood.
-        
-        As we continued down the path, someone whispered, "Are we still here, or are we there now?" The question lingered awkwardly in the air, unanswered. It seemed here had an uncanny ability to stretch, to follow us, to cling to our shoes like sticky mud.
-        
-        The guide stopped suddenly, pointing to a crooked sign with illegible writing. Here lies the truth," he said solemnly. The group leaned in, squinting at the faded letters, but no one could make sense of it. One brave soul asked, "What truth is here?"
-        
-        The guide smiled, shrugged, and said, "That depends on what you're looking for. Truth is always here, you just have to know how to see it."
-        
-        The journey continued, but the idea of here grew heavier. It wasn’t just a place—it was a feeling, a challenge, maybe even a trick. By the time we reached the end of the path, no one knew if we were still here or somewhere else entirely. But maybe, just maybe,here was exactly where we were meant to be all along.
-    </div>
-  <div>
-    <a href="gamble.html" class="invisible-button"></a>
-  </div>
-
-    <h1>Welcome to Homework Helper</h1>
-  <h1>
-    A scavangver hunt is inactive, No winners left. Winners are Eva, Sophia, and Fyez.
-  </h1>
-
-    <!-- Image Button for Calculator -->
-    <div class="calculator-button">
-        <a href="calculator.html">
-            <img src="https://images.vexels.com/content/127945/preview/hand-drawn-calculator-icon-50265e.png" alt="Calculator">
-        </a>
-    </div>
-    <!-- Image Button for clock -->
-    <div class="clock-button">
-        <a href="clock.html">
-            <img src="https://cdn-icons-png.flaticon.com/512/73/73184.png" alt="clock">
-        </a>
-    </div>
-
-    <!-- Cool S button -->
-    <div class="cool-s1">
-        <a href="Games.html">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/S-cool.svg/1200px-S-cool.svg.png" alt="Cool S">
-        </a>
-    </div>
-    <!-- Ruler button -->
-    <div class="ruler-button">
-        <a href="tools.html">
-            <img src="https://cdn.pixabay.com/photo/2023/02/11/01/46/ruler-7781879_1280.png" alt="ruler-button">
-        </a>
-    </div>
-    <!-- shop button -->
-    <div class="shop-button">
-        <a href="shop.html">
-            <img src="https://www.shareicon.net/download/2015/12/15/687910_sign_512x512.png" alt="shop-button">
-        </a>
-    </div>
-   <!-- box button -->
-    <div class="box-button">
-        <a href="https://forms.gle/bwj3ZM512J9kgrWa6">
-            <img src="https://news.wrexham.gov.uk/wp-content/uploads/2022/04/ballot-box-5566333.png" alt="shop-button">
-        </a>
-    </div>
-
-    <!-- Notebook lines -->
-    <div class="red-line"></div>
-</body>
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!kupKace code
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Keyboard Pet</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>School Schedule Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    #pet {
-      display: none;
-      position: absolute;
-      background-size: contain;
-      background-repeat: no-repeat;
-      width: 300px;
-      height: 300px;
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #000000;
+      --accent-color: #4caf50;
+      --bar-bg: #e0e0e0;
     }
-    .speech-bubble {
-      position: absolute;
-      bottom: 65%;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #fff;
-      border: 1px solid #ccc;
-      padding: 10px;
+
+    [data-theme="dark"] {
+      --bg-color: #121212;
+      --text-color: #ffffff;
+      --bar-bg: #333333;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: var(--bg-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
+
+    .clock {
+      font-size: 1.2rem;
+    }
+
+    .theme-toggle {
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      border: none;
+      background-color: var(--accent-color);
+      color: white;
+      border-radius: 5px;
+    }
+
+    main {
+      margin-top: 80px;
+      padding: 1rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .period {
+      margin: 1rem 0;
+    }
+
+    .period h3 {
+      margin: 0 0 0.25rem;
+    }
+
+    .progress-container {
+      background-color: var(--bar-bg);
       border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      white-space: nowrap;
-      font-size: 14px;
-      display: none;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 20px;
+      background-color: var(--accent-color);
+      width: 0%;
+      transition: width 1s linear;
+    }
+
+    .time-left {
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+      }
     }
   </style>
 </head>
-<body>
-  <div id="pet">
-    <div class="speech-bubble" id="speech"></div>
-  </div>
+<body data-theme="light">
+  <header>
+    <div class="clock" id="clock">--:--:--</div>
+    <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+  </header>
+  <main id="schedule">
+    <div class="period" id="period-1">
+      <h3>1st Period</h3>
+      <div class="progress-container">
+        <div class="progress-bar" id="bar-1"></div>
+      </div>
+      <div class="time-left" id="time-1">--m --s left</div>
+    </div>
+    <!-- Repeat .period blocks for each class period -->
+  </main>
+
   <script>
-    const petElement = document.getElementById("pet");
-    const speechBubble = document.getElementById("speech");
-    let petVisible = false;
-
-    // Set your pet image
-    petElement.style.backgroundImage = "url('https://preview.redd.it/thats-one-v0-y8pkhegql2tb1.png?width=1000&format=png&auto=webp&s=62190294fdd071c081c7d0d352fd1ddd153b58f1')";
-
-    // Random messages for the pet to say
-    const messages = [
-      "Hello!",
-      "I'm your new friend!",
-      "Jumping around!",
-      "Whee!",
-      "Let's play!",
+    const periods = [
+      { id: 1, start: "08:10", end: "09:00" },
+      // Add more periods as needed
     ];
 
-    // Function to show the pet
-    function showPet() {
-      if (!petVisible) {
-        petElement.style.display = "block";
-        petVisible = true;
-        movePet();
-      }
+    function updateClock() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString();
+      document.getElementById('clock').textContent = timeStr;
     }
 
-    // Function to hide the pet
-    function hidePet() {
-      petElement.style.display = "none";
-      petVisible = false;
+    function updateProgress() {
+      const now = new Date();
+      const nowMinutes = now.getHours() * 60 + now.getMinutes();
+
+      periods.forEach(period => {
+        const startParts = period.start.split(":").map(Number);
+        const endParts = period.end.split(":").map(Number);
+        const startMinutes = startParts[0] * 60 + startParts[1];
+        const endMinutes = endParts[0] * 60 + endParts[1];
+        const total = endMinutes - startMinutes;
+        const elapsed = nowMinutes - startMinutes;
+
+        const progress = Math.max(0, Math.min(1, elapsed / total));
+        const percent = progress * 100;
+        document.getElementById(`bar-${period.id}`).style.width = `${percent}%`;
+
+        const remaining = Math.max(0, (endMinutes - nowMinutes) * 60 - now.getSeconds());
+        const minutes = Math.floor(remaining / 60);
+        const seconds = remaining % 60;
+        document.getElementById(`time-${period.id}`).textContent = `${minutes}m ${seconds}s left`;
+      });
     }
 
-    // Function to display a speech bubble
-    function speak(message) {
-      speechBubble.textContent = message;
-      speechBubble.style.display = "block";
-      setTimeout(() => {
-        speechBubble.style.display = "none";
-      }, 2000);
+    function toggleTheme() {
+      const body = document.body;
+      const current = body.getAttribute("data-theme");
+      body.setAttribute("data-theme", current === "light" ? "dark" : "light");
     }
 
-    // Function to move the pet around
-    function movePet() {
-      if (!petVisible) return;
+    setInterval(() => {
+      updateClock();
+      updateProgress();
+    }, 1000);
 
-      const screenWidth = window.innerWidth;
-      const screenHeight = window.innerHeight;
-
-      let currentX = parseInt(petElement.style.left || 0);
-      let currentY = parseInt(petElement.style.top || 0);
-
-      const targetX = Math.max(0, Math.min(Math.random() * (screenWidth - 100), screenWidth - 100));
-      const targetY = Math.max(0, Math.min(Math.random() * (screenHeight - 100), screenHeight - 100));
-
-      const stepX = (targetX - currentX) / 100; // Slower movement
-      const stepY = (targetY - currentY) / 100;
-
-      let steps = 0;
-
-      function walk() {
-        if (steps < 100) {
-          currentX += stepX;
-          currentY += stepY;
-          petElement.style.left = `${currentX}px`;
-          petElement.style.top = `${currentY}px`;
-          steps++;
-          requestAnimationFrame(walk);
-        } else {
-          if (Math.random() > 0.7) {
-            const message = messages[Math.floor(Math.random() * messages.length)];
-            speak(message);
-          }
-          setTimeout(movePet, 2000);
-        }
-      }
-
-      walk();
-    }
-
-    // Listen for a specific key press (e.g., 'P' key)
-    window.addEventListener("keydown", (event) => {
-      if (event.key.toLowerCase() === "k") {
-        if (petVisible) {
-          hidePet();
-        } else {
-          showPet();
-        }
-      }
-    });
+    updateClock();
+    updateProgress();
   </script>
 </body>
 </html>
-
-
